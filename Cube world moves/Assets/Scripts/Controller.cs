@@ -10,6 +10,9 @@ public class Controller : MonoBehaviour
     [SerializeField] protected Vector3 acceleration;
     [SerializeField] private float mouseX;
     [SerializeField] private float mouseY;
+    [SerializeField] private float sensitivity;
+
+    private float angle;
     public bool JumpInput => _jumpInput;
     public float HorizontalInput => _horizontalInput;
     public float VerticalInput => _verticalInput;
@@ -63,8 +66,11 @@ public class Controller : MonoBehaviour
             Vector2 value = callback.ReadValue<Vector2>();
             mouseX = value.x;
             mouseY = value.y;
+            
+            angle += sensitivity * mouseX;
+            angle %= 360;
+            transform.eulerAngles = new Vector3(0, angle, 0);
         }
     }
     #endregion
-    
 }

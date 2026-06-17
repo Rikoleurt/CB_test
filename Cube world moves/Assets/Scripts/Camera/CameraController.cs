@@ -1,6 +1,9 @@
-﻿namespace Camera
+﻿using Unity.VisualScripting;
+using UnityEngine;
+
+namespace Camera
 {
-    public class CameraController
+    public class CameraController : MonoBehaviour
     {
         
     }

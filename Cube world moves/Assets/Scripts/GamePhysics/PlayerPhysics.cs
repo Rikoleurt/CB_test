@@ -68,7 +68,7 @@ public class PlayerPhysics : MonoBehaviour
     void CheckClimbableWall()
     {
         RaycastHit hit = new();
-        Physics.Raycast(transform.position, transform.forward, out hit, 0.55f);
+        Physics.Raycast(transform.position, transform.forward, out hit, 0.7f);
         _canClimb = hit.collider && hit.collider.CompareTag("Wall");
     }
     #endregion
