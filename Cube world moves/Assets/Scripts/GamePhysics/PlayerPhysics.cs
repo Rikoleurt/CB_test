@@ -1,4 +1,5 @@
-﻿using UnityEditorInternal;
+﻿using System;
+using UnityEditorInternal;
 using UnityEngine;
 
 public class PlayerPhysics : MonoBehaviour
@@ -9,11 +10,18 @@ public class PlayerPhysics : MonoBehaviour
     [SerializeField] private float _gravity;
     [SerializeField] private float groundFriction; // Between 0 and 1
     [SerializeField] private float stopThreshold;
-
+    MeshModelController _meshModel;
+    
     public Vector3 Acceleration => _acceleration;
     public bool IsGrounded => _isGrounded;
     public bool CanClimb => _canClimb;
     public float Gravity => _gravity;
+
+    private void Start()
+    {
+        _meshModel = GetComponentInChildren<MeshModelController>();
+    }
+
     void FixedUpdate()
     { 
         CheckGround();
@@ -68,7 +76,7 @@ public class PlayerPhysics : MonoBehaviour
     void CheckClimbableWall()
     {
         RaycastHit hit = new();
-        Physics.Raycast(transform.position, transform.forward, out hit, 0.7f);
+        Physics.Raycast(transform.position, _meshModel.transform.forward, out hit, 0.7f);
         _canClimb = hit.collider && hit.collider.CompareTag("Wall");
     }
     #endregion

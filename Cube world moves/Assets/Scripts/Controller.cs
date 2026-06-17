@@ -1,22 +1,32 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class Controller : MonoBehaviour
 {
+    public static Controller Instance;
+    
     [SerializeField] float _horizontalInput;
     [SerializeField] float _verticalInput;
     [SerializeField] bool _jumpInput;
     [SerializeField] bool _climbInput;
     [SerializeField] protected Vector3 acceleration;
-    [SerializeField] private float mouseX;
-    [SerializeField] private float mouseY;
-    [SerializeField] private float sensitivity;
-
+    [SerializeField] private Vector2 _deltaLook = new();
+    
     private float angle;
     public bool JumpInput => _jumpInput;
     public float HorizontalInput => _horizontalInput;
     public float VerticalInput => _verticalInput;
     public bool ClimbInput => _climbInput;
+
+    public Vector2 DeltaLookRaw => _deltaLook;
+    public Vector2 DeltaLook => _deltaLook/100;
+
+    private void Awake()
+    {
+        if(Instance == null) Instance = this;
+        else Destroy(this);
+    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -25,7 +35,6 @@ public class Controller : MonoBehaviour
     }
     
     #region Movement
-
     public void ReceiveMoveInput(InputAction.CallbackContext callback)
     {
         if (callback.performed)
@@ -61,16 +70,10 @@ public class Controller : MonoBehaviour
 
     public void ReceiveMouseMovement(InputAction.CallbackContext callback)
     {
-        if (callback.performed)
-        {
-            Vector2 value = callback.ReadValue<Vector2>();
-            mouseX = value.x;
-            mouseY = value.y;
-            
-            angle += sensitivity * mouseX;
-            angle %= 360;
-            transform.eulerAngles = new Vector3(0, angle, 0);
-        }
+        if (callback.performed) _deltaLook = callback.ReadValue<Vector2>();
+        if(callback.canceled) _deltaLook = Vector2.zero;
     }
+    
+    
     #endregion
 }

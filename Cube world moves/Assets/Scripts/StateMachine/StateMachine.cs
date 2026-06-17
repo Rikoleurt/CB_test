@@ -16,6 +16,7 @@ public class StateMachine : MonoBehaviour
         }
         
         InitAllStates();
+        
         currentState ??= PossibleStates[0];
         if(!currentState.isInit) currentState.InitState();
         currentState.EnterState();

@@ -23,8 +23,9 @@ public abstract class State : MonoBehaviour
     public virtual void InitState()
     {
         _stateMachine ??= GetComponent<StateMachine>();
-        _controller ??= GetComponent<Controller>();
+        _controller ??= Controller.Instance;
         _playerPhysics ??= GetComponent<PlayerPhysics>();
+        
         isInit = true;
     }
     

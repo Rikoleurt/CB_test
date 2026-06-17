@@ -4,9 +4,16 @@ public class MovementState : State
     
     [SerializeField] protected float maxSpeed = 10;
     [SerializeField] protected float moveSpeed = 2;
-    
+    protected PivotController pivotController;
+    protected MeshModelController meshModel;
     private const EPlayerState ENUMTYPE = EPlayerState.MOVEMENT;
     
+    public override void InitState()
+    {
+        base.InitState();
+        pivotController = GetComponentInChildren<PivotController>();
+        meshModel = GetComponentInChildren<MeshModelController>();
+    }
     public override void EnterState()
     {
         print("Entering Movement State");
@@ -21,7 +28,7 @@ public class MovementState : State
     public override void UpdateState()
     {
         Vector3 acceleration = _playerPhysics.Acceleration;
-        acceleration += _controller.VerticalInput * moveSpeed * transform.forward + _controller.HorizontalInput * moveSpeed * transform.right;
+        acceleration += _controller.VerticalInput * moveSpeed * pivotController.transform.forward + _controller.HorizontalInput * moveSpeed * pivotController.transform.right;
         
         acceleration.z = Mathf.Clamp(acceleration.z, -maxSpeed, maxSpeed);
         acceleration.x = Mathf.Clamp(acceleration.x, -maxSpeed, maxSpeed);
