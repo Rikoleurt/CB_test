@@ -7,22 +7,20 @@ public class ClimbState : MovementState
     public override void EnterState()
     {
         _playerPhysics.SetAcceleration(Vector3.zero);
+        _playerPhysics.SetGravity(0f); // Climbing gravity
         print("Entering Climb State");
     }
 
     public override void ExitState()
     {
+        _playerPhysics.SetGravity(1f); // Base gravity
         print("Exiting Climb State");
     }
     
     
     public override void UpdateState()
     {
-        Vector3 acceleration = _playerPhysics.Acceleration;
-        acceleration += _controller.VerticalInput * moveSpeed * transform.up + _controller.HorizontalInput * moveSpeed * transform.right;
-        
-        acceleration.y = Mathf.Clamp(acceleration.y, -maxSpeed, maxSpeed);
-        acceleration.x = Mathf.Clamp(acceleration.x, -maxSpeed, maxSpeed);
+        Vector3 acceleration = _controller.VerticalInput * moveSpeed * transform.up + _controller.HorizontalInput * moveSpeed * transform.right;
         
         _playerPhysics.SetAcceleration(acceleration);
         if(!_controller.ClimbInput) _stateMachine.Transition(EPlayerState.AIR);

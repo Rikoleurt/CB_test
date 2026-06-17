@@ -51,6 +51,11 @@ public class PlayerPhysics : MonoBehaviour
     {
         _acceleration += newAcceleration;
     }
+
+    public void SetGravity(float newGravity)
+    {
+        _gravity = newGravity;
+    }
     
     #region Checker
     void CheckGround()
