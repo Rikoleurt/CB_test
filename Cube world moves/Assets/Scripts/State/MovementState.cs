@@ -4,8 +4,13 @@ public class MovementState : State
     
     [SerializeField] protected float maxSpeed = 10;
     [SerializeField] protected float moveSpeed = 2;
+
+    protected Vector3 acceleration;
+
     protected PivotController pivotController;
     protected MeshModelController meshModel;
+    protected Camera playerCam;
+
     private const EPlayerState ENUMTYPE = EPlayerState.MOVEMENT;
     
     public override void InitState()
@@ -13,6 +18,7 @@ public class MovementState : State
         base.InitState();
         pivotController = GetComponentInChildren<PivotController>();
         meshModel = GetComponentInChildren<MeshModelController>();
+        playerCam = Camera.main;
     }
     public override void EnterState()
     {
@@ -24,14 +30,47 @@ public class MovementState : State
 
     public override void UpdateState()
     {
-        Vector3 acceleration = _playerPhysics.Acceleration;
-        acceleration += _controller.VerticalInput * moveSpeed * pivotController.transform.forward + _controller.HorizontalInput * moveSpeed * pivotController.transform.right;
-        
-        acceleration.z = Mathf.Clamp(acceleration.z, -maxSpeed, maxSpeed);
-        acceleration.x = Mathf.Clamp(acceleration.x, -maxSpeed, maxSpeed);
-        
+        acceleration = _playerPhysics.Acceleration;
+
+        Vector3 camForward = Vector3.ProjectOnPlane(playerCam.transform.forward, Vector3.up).normalized;
+        Vector3 camRight = Vector3.ProjectOnPlane(playerCam.transform.right, Vector3.up).normalized;
+
+        Vector2 input = new Vector2(
+            _controller.HorizontalInput,
+            _controller.VerticalInput
+        );
+
+        input = Vector2.ClampMagnitude(input, 1f);
+
+        Vector3 moveDirection = camForward * input.y + camRight * input.x;
+
+        if (moveDirection.sqrMagnitude > 1f)
+        {
+            moveDirection.Normalize();
+        }
+
+        Vector3 horizontalAcceleration = new Vector3(
+            acceleration.x,
+            0f,
+            acceleration.z
+        );
+
+        horizontalAcceleration += moveDirection * moveSpeed;
+
+        horizontalAcceleration = Vector3.ClampMagnitude(
+            horizontalAcceleration,
+            maxSpeed
+        );
+
+        acceleration.x = horizontalAcceleration.x;
+        acceleration.z = horizontalAcceleration.z;
+
         _playerPhysics.SetAcceleration(acceleration);
-        if(_playerPhysics.CanClimb && _controller.ClimbInput) _stateMachine.Transition(EPlayerState.CLIMB);
+
+        if (_playerPhysics.CanClimb && _controller.ClimbInput)
+        {
+            _stateMachine.Transition(EPlayerState.CLIMB);
+        }
     }
 
     public override EPlayerState GetEnumType()

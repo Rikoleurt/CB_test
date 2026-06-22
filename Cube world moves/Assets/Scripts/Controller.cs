@@ -5,7 +5,16 @@ using UnityEngine.InputSystem;
 public class Controller : MonoBehaviour
 {
     public static Controller Instance;
-    
+    private void Awake()
+    {
+        if(Instance == null) Instance = this;
+        else Destroy(this);
+    }
+    void OnApplicationQuit()
+    {
+        Instance = null;
+    }
+
     [SerializeField] float _horizontalInput;
     [SerializeField] float _verticalInput;
     [SerializeField] bool _jumpInput;
@@ -21,12 +30,6 @@ public class Controller : MonoBehaviour
 
     public Vector2 DeltaLookRaw => _deltaLook;
     public Vector2 DeltaLook => _deltaLook/100;
-
-    private void Awake()
-    {
-        if(Instance == null) Instance = this;
-        else Destroy(this);
-    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()

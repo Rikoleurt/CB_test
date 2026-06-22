@@ -6,7 +6,7 @@ public class ClimbState : MovementState
     private const EPlayerState ENUMTYPE = EPlayerState.CLIMB;
     public override void EnterState()
     {
-        meshModel.IsRotating = false;
+        meshModel.CanRotating = false;
         _playerPhysics.SetAcceleration(Vector3.zero);
         _playerPhysics.SetGravity(0f); // Climbing gravity
         print("Entering Climb State");
@@ -14,7 +14,7 @@ public class ClimbState : MovementState
 
     public override void ExitState()
     {
-        meshModel.IsRotating = true;
+        meshModel.CanRotating = true;
         _playerPhysics.SetGravity(1f); // Base gravity
         print("Exiting Climb State");
     }
