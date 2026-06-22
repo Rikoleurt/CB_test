@@ -28,7 +28,9 @@ public class StateMachine : MonoBehaviour
     public void Transition(EPlayerState newState)
     {
         currentState.ExitState();
+        currentState.enabled = false;
         currentState = PossibleStates[newState];
+        currentState.enabled = true;
         currentState.EnterState();
     }
     
@@ -49,6 +51,7 @@ public class StateMachine : MonoBehaviour
         foreach (State state in PossibleStates.Values)
         {
             state.InitState();
+            state.enabled = false;
         }
     }
 }

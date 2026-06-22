@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GroundState : MovementState
@@ -24,6 +22,9 @@ public class GroundState : MovementState
     public override void UpdateState()
     {
         base.UpdateState();
+
+        if(acceleration.magnitude > 0.1f) meshModel.UpdateModelRotation(pivotController.transform.eulerAngles.y);
+
         if (_controller.JumpInput && canJump)
         {
             _playerPhysics.AddAcceleration(jumpForce * Vector3.up);
