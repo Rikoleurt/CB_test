@@ -1,48 +1,69 @@
 ﻿using UnityEngine;
+
 public class WallRunState : MovementState
 {
-    [SerializeField] private float jumpForce;
-    [SerializeField] private float gravityWhileWallRunning;
+    [SerializeField] private float jumpForce = 8f;
+    [SerializeField] private float wallJumpSideForce = 8f;
+    [SerializeField] private float gravityWhileWallRunning = 0.2f;
+
+
     private const EPlayerState ENUMTYPE = EPlayerState.WALLRUN;
-    
+
     public override void EnterState()
     {
         _playerPhysics.SetGravity(gravityWhileWallRunning);
+        print("Entering WallRun State");
     }
 
     public override void ExitState()
     {
-        _playerPhysics.SetGravity(1);
+        _playerPhysics.SetGravity(1f);
+        print("Exiting WallRun State");
     }
 
     public override void UpdateState()
     {
-        Vector3 localRight = _playerPhysics.CanRunWallRight ? -transform.right : transform.right;
-        acceleration = _controller.VerticalInput * moveSpeed * localRight;
-
-        if (_controller.JumpInput)
-        {
-            _playerPhysics.SetAcceleration(new Vector3(acceleration.x, acceleration.y, acceleration.z) + transform.up * jumpForce + -transform.forward * jumpForce);
-            _stateMachine.Transition(EPlayerState.AIRLOCK);
-            return;
-        }
-        
-        #region StateMachineTransition
         if (_playerPhysics.IsGrounded)
         {
             _stateMachine.Transition(EPlayerState.GROUND);
             return;
         }
 
-        if (!_playerPhysics.CanRunWallLeft)
+        if (!_playerPhysics.TryGetWall(out RaycastHit wallHit))
         {
             _stateMachine.Transition(EPlayerState.AIR);
             return;
         }
-        #endregion
+
+        Vector3 wallNormal = wallHit.normal;
+
+        Vector3 wallRunDirection = Vector3.Cross(wallNormal, Vector3.up).normalized;
+
+        if (Vector3.Dot(wallRunDirection, meshModel.transform.forward) < 0f)
+        {
+            wallRunDirection = -wallRunDirection;
+        }
+
+        meshModel.transform.rotation = Quaternion.LookRotation(wallRunDirection, Vector3.up);
+
+        acceleration = wallRunDirection * (_controller.VerticalInput * moveSpeed);
+        
+        
+        if (_controller.JumpInput)
+        {
+            Vector3 jumpDirection =
+                Vector3.up * jumpForce +
+                wallNormal * wallJumpSideForce;
+
+            _playerPhysics.SetAcceleration(jumpDirection+ acceleration);
+            _stateMachine.Transition(EPlayerState.AIRLOCK);
+            return;
+        }
+
+
         _playerPhysics.SetAcceleration(acceleration);
     }
-    
+
     public override EPlayerState GetEnumType()
     {
         return ENUMTYPE;

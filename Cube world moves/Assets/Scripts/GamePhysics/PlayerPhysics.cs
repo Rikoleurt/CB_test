@@ -28,8 +28,6 @@ public class PlayerPhysics : MonoBehaviour
     { 
         CheckGround();
         CheckClimbableWall();
-        CheckRightRunnableWall();
-        CheckLeftRunnableWall();
         HandleVelocity();
     }
     
@@ -84,18 +82,38 @@ public class PlayerPhysics : MonoBehaviour
         _canClimb = hit.collider && hit.collider.CompareTag("Wall");
     }
 
-    void CheckRightRunnableWall()
+    public bool TryGetWall(out RaycastHit wallHit)
     {
-        RaycastHit hit = new();
-        Physics.Raycast(transform.position, _meshModel.transform.right, out hit, 0.7f);
-        _canRunWallRight = hit.collider && hit.collider.CompareTag("Wall");
-    }
+        Vector3 origin = transform.position;
 
-    void CheckLeftRunnableWall()
-    {
-        RaycastHit hit = new();
-        Physics.Raycast(transform.position, -_meshModel.transform.right, out hit, 0.7f);
-        _canRunWallLeft = hit.collider && hit.collider.CompareTag("Wall");
+        bool hitRight = Physics.Raycast(
+            origin,
+            _meshModel.transform.right,
+            out RaycastHit rightHit,
+            1
+        );
+
+        bool hitLeft = Physics.Raycast(
+            origin,
+            -_meshModel.transform.right,
+            out RaycastHit leftHit,
+            1
+        );
+
+        if (hitRight)
+        {
+            wallHit = rightHit;
+            return true;
+        }
+
+        if (hitLeft)
+        {
+            wallHit = leftHit;
+            return true;
+        }
+
+        wallHit = default;
+        return false;
     }
     #endregion
 }

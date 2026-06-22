@@ -21,7 +21,12 @@ public class AirLockState : State
 
     public override void UpdateState()
     {
-        if(_playerPhysics.IsGrounded) _stateMachine.Transition(EPlayerState.GROUND);
+        if (_playerPhysics.IsGrounded)
+        {
+            _stateMachine.Transition(EPlayerState.GROUND);
+            return;
+        } 
+
     }
 
     public override EPlayerState GetEnumType()
@@ -34,7 +39,7 @@ public class AirLockState : State
         int framesToWait = nbFrames;
         while (framesToWait > 0)
         {
-            yield return new WaitForEndOfFrame();
+            yield return new WaitForSeconds(Time.fixedDeltaTime);
             framesToWait--;
         }
         _stateMachine.Transition(EPlayerState.AIR);

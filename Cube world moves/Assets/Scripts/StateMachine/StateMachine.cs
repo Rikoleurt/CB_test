@@ -39,7 +39,7 @@ public class StateMachine : MonoBehaviour
     /**
      * Each frame, call the current state's update method.
      */
-    void Update()
+    void FixedUpdate()
     {
         currentState.UpdateState();
     }
@@ -54,5 +54,14 @@ public class StateMachine : MonoBehaviour
             state.InitState();
             state.enabled = false;
         }
+    }
+
+
+    void OnGUI()
+    {
+        GUI.Label(
+            new Rect(10, 10, 300, 30),
+            currentState != null ? currentState.ToString() : "No State"
+        );
     }
 }
