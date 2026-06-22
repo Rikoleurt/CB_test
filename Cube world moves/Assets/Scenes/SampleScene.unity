@@ -653,12 +653,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44a4f5e72a5d409ead424995e70d73ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Camera.CameraController
-  playerTransform: {fileID: 705916291}
-  playerSpline: {fileID: 296224581}
-  pivotTransform: {fileID: 1000654828}
-  controller: {fileID: 0}
-  sensitivityAngle: 0.5
-  sensitivityHeight: 0.2
+  _posFollower: {fileID: 0}
+  _pivotTransform: {fileID: 0}
+  _lookTransform: {fileID: 0}
+  _sensitivityAngle: 1
+  _sensitivityHeight: 1
+  _moveSmoothSpeed: 12
+  _rotationSmoothSpeed: 15
+  _boxHalfExtents: 0
+  _collisionMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -1124,6 +1129,7 @@ GameObject:
   - component: {fileID: 705916297}
   - component: {fileID: 705916299}
   - component: {fileID: 705916300}
+  - component: {fileID: 705916301}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -1288,6 +1294,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WallRunState
   maxSpeed: 10
   moveSpeed: 10
+  jumpForce: 15
+--- !u!114 &705916301
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 705916286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 370cde92a5b44f718aaff946ab530b9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RightWallRunState
+  maxSpeed: 10
+  moveSpeed: 10
+  jumpForce: 15
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -1428,6 +1450,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04e320a82075fd9478667f3e740a0d3c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  _canRotate: 1
 --- !u!23 &1961191923
 MeshRenderer:
   m_ObjectHideFlags: 0

@@ -18,8 +18,8 @@ public class AirState : MovementState
     {
         base.UpdateState();
         if(_playerPhysics.IsGrounded) _stateMachine.Transition(EPlayerState.GROUND);
-        if(_playerPhysics.CanRunWallRight) _stateMachine.Transition(EPlayerState.RIGHTRUNWALL);
-        if(_playerPhysics.CanRunWallLeft) _stateMachine.Transition(EPlayerState.LEFTRUNWALL);
+        if(_playerPhysics.CanRunWallRight) _stateMachine.Transition(EPlayerState.WALLRUN);
+        if(_playerPhysics.CanRunWallLeft) _stateMachine.Transition(EPlayerState.WALLRUN);
     }
     
     public override EPlayerState GetEnumType()

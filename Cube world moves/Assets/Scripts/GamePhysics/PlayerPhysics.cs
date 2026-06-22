@@ -17,7 +17,6 @@ public class PlayerPhysics : MonoBehaviour
     public bool CanClimb => _canClimb;
     public float Gravity => _gravity;
     public bool CanRunWallRight => _canRunWallRight;
-
     public bool CanRunWallLeft => _canRunWallLeft;
 
     private void Start()
