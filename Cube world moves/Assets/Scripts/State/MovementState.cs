@@ -16,13 +16,10 @@ public class MovementState : State
     }
     public override void EnterState()
     {
-        print("Entering Movement State");
     }
 
     public override void ExitState()
     {
-      
-        print("Exiting Movement State");
     }
 
     public override void UpdateState()

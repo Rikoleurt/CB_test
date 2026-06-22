@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class ClimbState : MovementState
 {
+    [SerializeField] private float jumpForce;
     private const EPlayerState ENUMTYPE = EPlayerState.CLIMB;
     public override void EnterState()
     {
@@ -22,10 +23,15 @@ public class ClimbState : MovementState
     public override void UpdateState()
     {
         Vector3 acceleration = _controller.VerticalInput * moveSpeed * transform.up + _controller.HorizontalInput * moveSpeed * transform.right;
-        
-        _playerPhysics.SetAcceleration(acceleration);
+        if (_controller.JumpInput)
+        {
+            if(acceleration.y >= 0) _playerPhysics.SetAcceleration(jumpForce * new Vector3(acceleration.x, acceleration.y, acceleration.z));
+            else _playerPhysics.SetAcceleration(-transform.forward * jumpForce + transform.up );
+        }
+        else _playerPhysics.SetAcceleration(acceleration);    
         if(!_controller.ClimbInput) _stateMachine.Transition(EPlayerState.AIR);
         if(!_playerPhysics.CanClimb) _stateMachine.Transition(EPlayerState.AIR);
+        
     }
     
 

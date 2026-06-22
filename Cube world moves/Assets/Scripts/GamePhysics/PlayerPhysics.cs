@@ -1,11 +1,11 @@
-﻿using System;
-using UnityEditorInternal;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerPhysics : MonoBehaviour
 {
     [SerializeField] bool _isGrounded;
     [SerializeField] bool _canClimb;
+    [SerializeField] bool _canRunWallRight;
+    [SerializeField] bool _canRunWallLeft;
     [SerializeField] Vector3 _acceleration;
     [SerializeField] private float _gravity;
     [SerializeField] private float groundFriction; // Between 0 and 1
@@ -16,6 +16,9 @@ public class PlayerPhysics : MonoBehaviour
     public bool IsGrounded => _isGrounded;
     public bool CanClimb => _canClimb;
     public float Gravity => _gravity;
+    public bool CanRunWallRight => _canRunWallRight;
+
+    public bool CanRunWallLeft => _canRunWallLeft;
 
     private void Start()
     {
@@ -26,6 +29,8 @@ public class PlayerPhysics : MonoBehaviour
     { 
         CheckGround();
         CheckClimbableWall();
+        CheckRightRunnableWall();
+        CheckLeftRunnableWall();
         HandleVelocity();
     }
     
@@ -55,9 +60,9 @@ public class PlayerPhysics : MonoBehaviour
     {
         _acceleration = newAcceleration;
     }
-    public void AddAcceleration(Vector3 newAcceleration)
+    public void AddAcceleration(Vector3 accelerationVector)
     {
-        _acceleration += newAcceleration;
+        _acceleration += accelerationVector;
     }
 
     public void SetGravity(float newGravity)
@@ -78,6 +83,20 @@ public class PlayerPhysics : MonoBehaviour
         RaycastHit hit = new();
         Physics.Raycast(transform.position, _meshModel.transform.forward, out hit, 0.7f);
         _canClimb = hit.collider && hit.collider.CompareTag("Wall");
+    }
+
+    void CheckRightRunnableWall()
+    {
+        RaycastHit hit = new();
+        Physics.Raycast(transform.position, _meshModel.transform.right, out hit, 0.7f);
+        _canRunWallRight = hit.collider && hit.collider.CompareTag("Wall");
+    }
+
+    void CheckLeftRunnableWall()
+    {
+        RaycastHit hit = new();
+        Physics.Raycast(transform.position, -_meshModel.transform.right, out hit, 0.7f);
+        _canRunWallLeft = hit.collider && hit.collider.CompareTag("Wall");
     }
     #endregion
 }

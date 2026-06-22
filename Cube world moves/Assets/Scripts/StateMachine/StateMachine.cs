@@ -9,10 +9,11 @@ public class StateMachine : MonoBehaviour
     
     public virtual void Awake()
     {
-        var xxx = GetComponents<State>();
-        foreach (State s in xxx)
+        var components = GetComponents<State>();
+        foreach (State s in components)
         {
             PossibleStates.Add(s.GetEnumType(), s);
+            print(s.name);
         }
         
         InitAllStates();

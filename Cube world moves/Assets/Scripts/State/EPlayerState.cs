@@ -6,6 +6,8 @@ public enum EPlayerState
     IDLE,
     GROUND,
     AIR,
-    CLIMB
+    CLIMB,
+    LEFTRUNWALL,
+    RIGHTRUNWALL,
 }
 

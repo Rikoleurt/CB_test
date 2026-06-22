@@ -1123,6 +1123,7 @@ GameObject:
   - component: {fileID: 705916298}
   - component: {fileID: 705916297}
   - component: {fileID: 705916299}
+  - component: {fileID: 705916300}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -1222,6 +1223,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _isGrounded: 0
   _canClimb: 0
+  _canRunWallRight: 0
+  _canRunWallLeft: 0
   _acceleration: {x: 0, y: 0, z: 0}
   _gravity: 1
   groundFriction: 0.1
@@ -1270,6 +1273,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxSpeed: 5
   moveSpeed: 5
+  jumpForce: 3
+--- !u!114 &705916300
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 705916286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 319d3e65b5804de78bf3202881f65f6f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WallRunState
+  maxSpeed: 10
+  moveSpeed: 10
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
