@@ -13,13 +13,14 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float _moveSmoothSpeed = 12f;
     [SerializeField] private float _rotationSmoothSpeed = 15f;
 
-    [SerializeField] private float _boxHalfExtents;
-    [SerializeField] private LayerMask _collisionMask = ~0;
+    [SerializeField] private float _collisionRadius = 0.25f;
 
     private Controller _controller;
 
     [ShowNonSerializedField] private float angle;
     [ShowNonSerializedField] private float height = .5f;
+
+    private bool _cameraBlocked;
 
     void Start()
     {
@@ -33,12 +34,11 @@ public class CameraController : MonoBehaviour
         UpdateCameraRig();
 
         Vector3 desiredPosition = _posFollower.transform.position;
+        Vector3 safePosition = ResolveBlockedPosition(desiredPosition);
 
-        desiredPosition = ResolveBlockedPosition(desiredPosition);
+        Quaternion desiredRotation = GetLookRotationFromPosition(safePosition);
 
-        Quaternion desiredRotation = GetLookRotation();
-
-        ApplySmoothTransform(desiredPosition, desiredRotation);
+        ApplySmoothTransform(safePosition, desiredRotation);
     }
 
     private void UpdateInput()
@@ -55,13 +55,12 @@ public class CameraController : MonoBehaviour
     private void UpdateCameraRig()
     {
         _pivotTransform.eulerAngles = new Vector3(0f, angle, 0f);
-
         _posFollower.UpdatePos(height);
     }
 
-    private Quaternion GetLookRotation()
+    private Quaternion GetLookRotationFromPosition(Vector3 cameraPosition)
     {
-        Vector3 lookDirection = _lookTransform.position - transform.position;
+        Vector3 lookDirection = _lookTransform.position - cameraPosition;
 
         if (lookDirection.sqrMagnitude < 0.0001f)
         {
@@ -73,36 +72,43 @@ public class CameraController : MonoBehaviour
 
     private void ApplySmoothTransform(Vector3 desiredPosition, Quaternion desiredRotation)
     {
-        float moveT = 1f - Mathf.Exp(-_moveSmoothSpeed * Time.fixedDeltaTime);
-        float rotT = 1f - Mathf.Exp(-_rotationSmoothSpeed * Time.fixedDeltaTime);
+        float rotT = 1f - Mathf.Exp(-_rotationSmoothSpeed * Time.deltaTime);
 
-        transform.position = Vector3.Lerp(transform.position, desiredPosition, moveT);
+        if (_cameraBlocked)
+        {
+            transform.position = desiredPosition;
+        }
+        else
+        {
+            float moveT = 1f - Mathf.Exp(-_moveSmoothSpeed * Time.deltaTime);
+            transform.position = Vector3.Slerp(transform.position, desiredPosition, moveT);
+        }
+
         transform.rotation = Quaternion.Slerp(transform.rotation, desiredRotation, rotT);
     }
 
     private Vector3 ResolveBlockedPosition(Vector3 desiredPosition)
     {
-        Vector3 startPosition = transform.position;
-        Vector3 move = desiredPosition - startPosition;
+        _cameraBlocked = false;
 
-        float distance = move.magnitude;
+        Vector3 origin = _lookTransform.position;
+        Vector3 toCamera = desiredPosition - origin;
+
+        float distance = toCamera.magnitude;
 
         if (distance < 0.0001f)
         {
             return desiredPosition;
         }
 
-        Vector3 direction = move / distance;
+        Vector3 direction = toCamera / distance;
 
-        bool blocked = Physics.BoxCast(
-            startPosition,
-            _boxHalfExtents * Vector3.one,
+        bool blocked = Physics.SphereCast(
+            origin,
+            _collisionRadius,
             direction,
             out RaycastHit hit,
-            transform.rotation,
-            distance,
-            _collisionMask,
-            QueryTriggerInteraction.Ignore
+            distance
         );
 
         if (!blocked)
@@ -110,43 +116,16 @@ public class CameraController : MonoBehaviour
             return desiredPosition;
         }
 
-        float skin = 0.03f;
+        _cameraBlocked = true;
 
-        float safeDistance = Mathf.Max(hit.distance - skin, 0f);
-        Vector3 safePosition = startPosition + direction * safeDistance;
+        float safeDistance = Mathf.Max(hit.distance, 0f);
 
-        Vector3 remainingMove = desiredPosition - safePosition;
-
-        Vector3 slideMove = Vector3.ProjectOnPlane(remainingMove, hit.normal);
-
-        if (slideMove.sqrMagnitude < 0.0001f) return safePosition;
-
-        Vector3 slideDirection = slideMove.normalized;
-        float slideDistance = slideMove.magnitude;
-
-        bool slideBlocked = Physics.BoxCast(
-            safePosition,
-            _boxHalfExtents * Vector3.one,
-            slideDirection,
-            out RaycastHit slideHit,
-            transform.rotation,
-            slideDistance,
-            _collisionMask,
-            QueryTriggerInteraction.Ignore
-        );
-
-        if (slideBlocked)
-        {
-            float safeSlideDistance = Mathf.Max(slideHit.distance - skin, 0f);
-            return safePosition + slideDirection * safeSlideDistance;
-        }
-
-        return safePosition + slideMove;
+        return origin + direction * safeDistance;
     }
 
     void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(transform.position, _boxHalfExtents * Vector3.one * 2f);
+        Gizmos.DrawWireSphere(transform.position, _collisionRadius);
     }
 }
