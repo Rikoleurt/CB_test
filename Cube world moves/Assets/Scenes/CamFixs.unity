@@ -559,12 +559,9 @@ MonoBehaviour:
   _lookTransform: {fileID: 935754333}
   _sensitivityAngle: 0.3
   _sensitivityHeight: 0.2
-  _moveSmoothSpeed: 10
+  _moveSmoothSpeed: 50
   _rotationSmoothSpeed: 50
-  _boxHalfExtents: 1
-  _collisionMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
+  _collisionRadius: 0.25
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -1128,10 +1125,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6d86543208f4ef1865840ba000f7e87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isGrounded: 0
-  _canClimb: 0
-  _canRunWallRight: 0
-  _canRunWallLeft: 0
   _acceleration: {x: 0, y: 0, z: 0}
   _gravity: 1
   groundFriction: 0.1
@@ -1149,7 +1142,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxSpeed: 10
-  moveSpeed: 2
+  _moveSpeed: 2
   jumpForce: 20
   canJump: 0
 --- !u!114 &705916298
@@ -1165,7 +1158,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxSpeed: 10
-  moveSpeed: 2
+  _moveSpeed: 2
 --- !u!114 &705916299
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1179,8 +1172,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxSpeed: 5
-  moveSpeed: 5
-  jumpForce: 0
+  _moveSpeed: 2
+  _jumpForce: 8
+  _wallStickForce: 3
 --- !u!114 &705916301
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1194,10 +1188,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LeftWallRunState
   maxSpeed: 10
-  moveSpeed: 10
-  jumpForce: 10
-  wallJumpSideForce: 8
-  gravityWhileWallRunning: 0
+  _moveSpeed: 11
+  _jumpForce: 8
+  _wallJumpSideForce: 8
+  _gravityWhileWallRunning: 0
+  _wallStickForce: 3
 --- !u!114 &705916302
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1269,6 +1264,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 935754333}
+  - component: {fileID: 935754334}
   m_Layer: 0
   m_Name: CamLook
   m_TagString: Untagged
@@ -1291,6 +1287,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1961191921}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &935754334
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 935754332}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5c4332823bb5dd10a4fd62d0762b811, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraLook
 --- !u!1 &1000654827
 GameObject:
   m_ObjectHideFlags: 0
@@ -1441,13 +1449,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1541280629}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.9683678, z: -0, w: -0.2495271}
-  m_LocalPosition: {x: 21.84, y: 18.8, z: 11.65}
+  m_LocalRotation: {x: -0, y: 0.9884008, z: -0, w: 0.15186828}
+  m_LocalPosition: {x: 24.7, y: 18.8, z: 16.6}
   m_LocalScale: {x: 25, y: 50, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 208.899, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 162.53, z: 0}
 --- !u!1 &1669366972
 GameObject:
   m_ObjectHideFlags: 0

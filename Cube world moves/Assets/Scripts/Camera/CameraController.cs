@@ -5,7 +5,7 @@ public class CameraController : MonoBehaviour
 {
     [SerializeField] private SplineFollower _posFollower;
     [SerializeField] private Transform _pivotTransform;
-    [SerializeField] private Transform _lookTransform;
+    [SerializeField] private CameraLook _camLook;
 
     [SerializeField] private float _sensitivityAngle = 1f;
     [SerializeField] private float _sensitivityHeight = 1f;
@@ -60,7 +60,7 @@ public class CameraController : MonoBehaviour
 
     private Quaternion GetLookRotationFromPosition(Vector3 cameraPosition)
     {
-        Vector3 lookDirection = _lookTransform.position - cameraPosition;
+        Vector3 lookDirection = _camLook.transform.position - cameraPosition;
 
         if (lookDirection.sqrMagnitude < 0.0001f)
         {
@@ -91,7 +91,7 @@ public class CameraController : MonoBehaviour
     {
         _cameraBlocked = false;
 
-        Vector3 origin = _lookTransform.position;
+        Vector3 origin = _camLook.transform.position;
         Vector3 toCamera = desiredPosition - origin;
 
         float distance = toCamera.magnitude;
