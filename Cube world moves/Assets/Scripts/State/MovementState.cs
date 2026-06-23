@@ -36,7 +36,7 @@ public class MovementState : State
         
         Vector3 groundAcceleration = new Vector3(acceleration.x, 0f, acceleration.z);
         
-        groundAcceleration += moveDirection * moveSpeed;
+        groundAcceleration += moveDirection * _moveSpeed;
         
         groundAcceleration = Vector3.ClampMagnitude(
             groundAcceleration,

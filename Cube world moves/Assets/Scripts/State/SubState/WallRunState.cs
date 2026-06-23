@@ -25,31 +25,9 @@ public class WallRunState : MovementState
     public override void UpdateState()
     {
         MakeTransition();
-        
         RaycastHit wallHit = _playerPhysics.isWallRight ? _playerPhysics.WallRight : _playerPhysics.WallLeft;
-        
-        Vector3 wallNormal = wallHit.normal;
-        Vector3 wallRunDirection = Vector3.Cross(wallNormal, Vector3.up).normalized;
-
-        if (Vector3.Dot(wallRunDirection, meshModel.transform.forward) < 0f) wallRunDirection = -wallRunDirection;
-        
-        meshModel.transform.rotation = Quaternion.LookRotation(wallRunDirection, Vector3.up);
-        acceleration = wallRunDirection * (_controller.VerticalInput * _moveSpeed) + -wallNormal.normalized*_wallStickForce;
-        
-        if (_controller.JumpInput)
-        {
-            Vector3 jumpDirection =
-                Vector3.up * _jumpForce +
-                wallNormal * _wallJumpSideForce;
-
-            acceleration += wallNormal.normalized*_wallStickForce;
-
-            _playerPhysics.SetAcceleration(jumpDirection + acceleration);
-            _stateMachine.Transition(EPlayerState.AIRLOCK);
-            return;
-        }
-
-
+        SnapModel(wallHit);
+        HandleJump(wallHit);
         _playerPhysics.SetAcceleration(acceleration);
     }
 
@@ -58,6 +36,31 @@ public class WallRunState : MovementState
         return ENUMTYPE;
     }
 
+    private void SnapModel(RaycastHit wallHit)
+    {
+        Vector3 wallRunDirection = Vector3.Cross(wallHit.normal, Vector3.up).normalized;
+
+        if (Vector3.Dot(wallRunDirection, meshModel.transform.forward) < 0f) wallRunDirection = -wallRunDirection;
+        
+        meshModel.transform.rotation = Quaternion.LookRotation(wallRunDirection, Vector3.up);
+        acceleration = wallRunDirection * (_controller.VerticalInput * _moveSpeed) + -wallHit.normal.normalized*_wallStickForce;
+    }
+
+    private void HandleJump(RaycastHit wallHit)
+    {
+        if (_controller.JumpInput)
+        {
+            Vector3 jumpDirection =
+                Vector3.up * _jumpForce +
+                wallHit.normal * _wallJumpSideForce;
+            
+            acceleration += wallHit.normal.normalized*_wallStickForce;
+
+            _playerPhysics.SetAcceleration(jumpDirection + acceleration);
+            _stateMachine.Transition(EPlayerState.AIRLOCK);
+            return;
+        }
+    }
     public override void MakeTransition()
     {
         if (_playerPhysics.isWallDown)

@@ -29,5 +29,6 @@ public class AirState : MovementState
     {
         if (_playerPhysics.isWallDown) _stateMachine.Transition(EPlayerState.GROUND);
         if (_playerPhysics.isWallSide) _stateMachine.Transition(EPlayerState.WALLRUN);
+        if (_playerPhysics.isWallFront && _controller.ClimbInput) _stateMachine.Transition(EPlayerState.CLIMB);
     }
 }

@@ -36,6 +36,8 @@ public class GroundState : MovementState
     public override void MakeTransition()
     {
         if (!_playerPhysics.isWallDown) _stateMachine.Transition(EPlayerState.AIR);
+        if (_playerPhysics.isWallFront && _controller.ClimbInput) _stateMachine.Transition(EPlayerState.CLIMB);
+        
     }
 
     private void HandleJump()

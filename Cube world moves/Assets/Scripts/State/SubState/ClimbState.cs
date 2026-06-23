@@ -22,7 +22,7 @@ public class ClimbState : MovementState
     
     public override void UpdateState()
     {
-        if(_playerPhysics.isWallFront) _stateMachine.Transition(EPlayerState.AIR);
+        MakeTransition();
 
         RaycastHit wallHit = _playerPhysics.WallFront;
         acceleration = 
@@ -42,7 +42,12 @@ public class ClimbState : MovementState
 
         meshModel.transform.rotation = Quaternion.LookRotation(-wallHit.normal);
     }
-    
+
+    public override void MakeTransition()
+    {
+        if(!_playerPhysics.isWallFront) _stateMachine.Transition(EPlayerState.AIR);
+
+    }
 
     public override EPlayerState GetEnumType()
     {
