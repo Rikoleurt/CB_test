@@ -23,17 +23,7 @@ public class WallRunState : MovementState
 
     public override void UpdateState()
     {
-        if (_playerPhysics.isWallDown)
-        {
-            _stateMachine.Transition(EPlayerState.GROUND);
-            return;
-        }
-
-        if (!_playerPhysics.isWallLeft && !_playerPhysics.isWallRight)
-        {
-            _stateMachine.Transition(EPlayerState.AIR);
-            return;
-        }
+        MakeTransition();
         
         RaycastHit wallHit = _playerPhysics.isWallRight ? _playerPhysics.WallRight : _playerPhysics.WallLeft;
         
@@ -51,7 +41,7 @@ public class WallRunState : MovementState
                 Vector3.up * jumpForce +
                 wallNormal * wallJumpSideForce;
 
-            _playerPhysics.SetAcceleration(jumpDirection+ acceleration);
+            _playerPhysics.SetAcceleration(jumpDirection + acceleration);
             _stateMachine.Transition(EPlayerState.AIRLOCK);
             return;
         }
@@ -65,8 +55,18 @@ public class WallRunState : MovementState
         return ENUMTYPE;
     }
 
-    private void OnDrawGizmos()
+    public override void MakeTransition()
     {
-        
+        if (_playerPhysics.isWallDown)
+        {
+            _stateMachine.Transition(EPlayerState.GROUND);
+            return;
+        }
+
+        if (!_playerPhysics.isWallLeft && !_playerPhysics.isWallRight)
+        {
+            _stateMachine.Transition(EPlayerState.AIR);
+            return;
+        } 
     }
 }

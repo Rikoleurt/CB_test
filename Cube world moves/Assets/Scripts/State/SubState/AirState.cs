@@ -17,12 +17,17 @@ public class AirState : MovementState
     public override void UpdateState()
     {
         base.UpdateState();
-        if(_playerPhysics.isWallDown) _stateMachine.Transition(EPlayerState.GROUND);
-        if(_playerPhysics.isWallSide) _stateMachine.Transition(EPlayerState.WALLRUN);
+        MakeTransition();
     }
-    
+
     public override EPlayerState GetEnumType()
     {
         return ENUMTYPE;
+    }
+
+    public override void MakeTransition()
+    {
+        if (_playerPhysics.isWallDown) _stateMachine.Transition(EPlayerState.GROUND);
+        if (_playerPhysics.isWallSide) _stateMachine.Transition(EPlayerState.WALLRUN);
     }
 }

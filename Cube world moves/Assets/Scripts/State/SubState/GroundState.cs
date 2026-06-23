@@ -22,21 +22,35 @@ public class GroundState : MovementState
     public override void UpdateState()
     {
         base.UpdateState();
-
-        if(acceleration.magnitude > 0.1f) meshModel.UpdateModelRotation(pivotController.transform.eulerAngles.y);
-
-        if (_controller.JumpInput && canJump)
-        {
-            _playerPhysics.AddAcceleration(jumpForce * Vector3.up);
-            canJump = false;
-        }
-        if (!_playerPhysics.isWallDown) _stateMachine.Transition(EPlayerState.AIR);
-        
+        SnapModel();
+        HandleJump();
+        MakeTransition();
     }
     
 
     public override EPlayerState GetEnumType()
     {
         return ENUMTYPE;
+    }
+
+    public override void MakeTransition()
+    {
+        if (!_playerPhysics.isWallDown) _stateMachine.Transition(EPlayerState.AIR);
+    }
+
+    private void HandleJump()
+    {
+        if (_controller.JumpInput && canJump)
+        {
+            _playerPhysics.AddAcceleration(jumpForce * Vector3.up);
+            canJump = false;
+        }
+
+    }
+
+    private void SnapModel()
+    {
+        if(acceleration.magnitude > 0.1f) meshModel.UpdateModelRotation(pivotController.transform.eulerAngles.y);
+
     }
 }

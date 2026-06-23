@@ -1,5 +1,4 @@
-﻿
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 
 public class AirLockState : State
@@ -7,7 +6,7 @@ public class AirLockState : State
     [SerializeField] private int nbFrames;
     private Coroutine coroutine;
     private const EPlayerState ENUMTYPE = EPlayerState.AIRLOCK;
-    
+
     public override void EnterState()
     {
         coroutine = StartCoroutine(LockWindow());
@@ -21,17 +20,21 @@ public class AirLockState : State
 
     public override void UpdateState()
     {
-        if (_playerPhysics.isWallDown)
-        {
-            _stateMachine.Transition(EPlayerState.GROUND);
-            return;
-        } 
-
+        MakeTransition();
     }
 
     public override EPlayerState GetEnumType()
     {
         return ENUMTYPE;
+    }
+
+    public override void MakeTransition()
+    {
+        if (_playerPhysics.isWallDown)
+        {
+            _stateMachine.Transition(EPlayerState.GROUND);
+            return;
+        }
     }
 
     IEnumerator LockWindow()
@@ -42,6 +45,7 @@ public class AirLockState : State
             yield return new WaitForSeconds(Time.fixedDeltaTime);
             framesToWait--;
         }
+
         _stateMachine.Transition(EPlayerState.AIR);
     }
 }

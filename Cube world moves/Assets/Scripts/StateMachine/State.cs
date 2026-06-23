@@ -19,6 +19,10 @@ public abstract class State : MonoBehaviour
      * Called each frame.
      */
     public abstract void UpdateState();
+    /**
+     * Implement it to declare transitions between the state to the others.
+     */
+    public abstract void MakeTransition();
     
     public virtual void InitState()
     {
