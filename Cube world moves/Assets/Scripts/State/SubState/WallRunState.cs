@@ -38,25 +38,29 @@ public class WallRunState : MovementState
 
     private void SnapModel(RaycastHit wallHit)
     {
+        // Direction
         Vector3 wallRunDirection = Vector3.Cross(wallHit.normal, Vector3.up).normalized;
-
         if (Vector3.Dot(wallRunDirection, meshModel.transform.forward) < 0f) wallRunDirection = -wallRunDirection;
         
+        // Make it look the wall run direction
         meshModel.transform.rotation = Quaternion.LookRotation(wallRunDirection, Vector3.up);
-        acceleration = wallRunDirection * (_controller.VerticalInput * _moveSpeed) + -wallHit.normal.normalized*_wallStickForce;
+        // Accelerate the player along the wall
+        acceleration = wallRunDirection * (_controller.VerticalInput * _moveSpeed) + -wallHit.normal.normalized * _wallStickForce;
     }
 
     private void HandleJump(RaycastHit wallHit)
     {
         if (_controller.JumpInput)
         {
+            acceleration += wallHit.normal.normalized * _wallStickForce;
+
             Vector3 jumpDirection =
                 Vector3.up * _jumpForce +
                 wallHit.normal * _wallJumpSideForce;
             
-            acceleration += wallHit.normal.normalized*_wallStickForce;
-
-            _playerPhysics.SetAcceleration(jumpDirection + acceleration);
+            acceleration += jumpDirection;
+            
+            _playerPhysics.SetAcceleration(acceleration);
             _stateMachine.Transition(EPlayerState.AIRLOCK);
             return;
         }

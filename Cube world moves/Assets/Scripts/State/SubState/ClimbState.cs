@@ -33,10 +33,11 @@ public class ClimbState : MovementState
         
         if (_controller.JumpInput)
         {
+            acceleration += wallHit.normal.normalized * _wallStickForce; // Suppress wall hit force  before jumping
             if (acceleration.y >= 0) acceleration *= _jumpForce;
-            else acceleration = -wallHit.normal * _jumpForce + Vector3.up;
+            else acceleration = wallHit.normal * _jumpForce + Vector3.up;
             
-            acceleration += wallHit.normal.normalized * _wallStickForce;
+            _playerPhysics.SetAcceleration(acceleration);
             _stateMachine.Transition(EPlayerState.AIRLOCK);
             return;
         }
