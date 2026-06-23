@@ -2,23 +2,40 @@
 
 public class PlayerPhysics : MonoBehaviour
 {
-    [SerializeField] bool _isGrounded;
-    [SerializeField] bool _canClimb;
-    [SerializeField] bool _canRunWallRight;
-    [SerializeField] bool _canRunWallLeft;
+    
     [SerializeField] Vector3 _acceleration;
     [SerializeField] private float _gravity;
     [SerializeField] private float groundFriction; // Between 0 and 1
     [SerializeField] private float stopThreshold;
+    
     MeshModelController _meshModel;
     
+    private RaycastHit _wallLeft;
+    private RaycastHit _wallRight;
+    private RaycastHit _wallUp;
+    private RaycastHit _wallDown;
+    private RaycastHit _wallFront;
+    private RaycastHit _wallBack;
+    
     public Vector3 Acceleration => _acceleration;
-    public bool IsGrounded => _isGrounded;
-    public bool CanClimb => _canClimb;
     public float Gravity => _gravity;
-    public bool CanRunWallRight => _canRunWallRight;
-    public bool CanRunWallLeft => _canRunWallLeft;
 
+    public RaycastHit WallLeft => _wallLeft;
+    public RaycastHit WallRight => _wallRight;
+    public RaycastHit WallUp => _wallUp;
+    public RaycastHit WallDown => _wallDown;
+    public RaycastHit WallFront => _wallFront;
+    public RaycastHit WallBack => _wallBack;
+    
+    public bool isWallDown => _wallDown.collider;
+    public bool isWallFront => _wallFront.collider;
+    public bool isWallBack => _wallBack.collider;
+    public bool isWallLeft => _wallLeft.collider;
+    public bool isWallRight => _wallRight.collider;
+    public bool isWallUp => _wallUp.collider;
+
+    public bool isWallSide => isWallLeft || isWallRight;
+    
     private void Start()
     {
         _meshModel = GetComponentInChildren<MeshModelController>();
@@ -26,16 +43,15 @@ public class PlayerPhysics : MonoBehaviour
 
     void FixedUpdate()
     { 
-        CheckGround();
-        CheckClimbableWall();
+        CheckWalls();
         HandleVelocity();
     }
     
-    #region voids
+    #region acceleration
     void HandleVelocity()
     {
         // Handle x and z movements (with friction)
-        if (_isGrounded)
+        if (_wallDown.collider)
         {
             if (_acceleration.x != 0) _acceleration.x += groundFriction * -_acceleration.x;
             if (_acceleration.z != 0) _acceleration.z += groundFriction * -_acceleration.z;
@@ -51,8 +67,6 @@ public class PlayerPhysics : MonoBehaviour
         
         transform.position += _acceleration * Time.fixedDeltaTime;
     }
-    #endregion
-    
     public void SetAcceleration(Vector3 newAcceleration)
     {
         _acceleration = newAcceleration;
@@ -66,54 +80,47 @@ public class PlayerPhysics : MonoBehaviour
     {
         _gravity = newGravity;
     }
-    
-    #region Checker
-    void CheckGround()
+    #endregion
+    #region WallChecker
+    private void CheckWalls()
     {
-        RaycastHit hit = new();
-        Physics.Raycast(transform.position, Vector3.down, out hit, 0.55f);
-        _isGrounded = hit.collider && hit.collider.CompareTag("Ground");
+        Vector3 origin = _meshModel.transform.position;
+
+        Physics.Raycast(origin, Vector3.down, out _wallDown, 1);
+        Physics.Raycast(origin, _meshModel.transform.up, out _wallUp, 1);
+        Physics.Raycast(origin, _meshModel.transform.right, out _wallRight, 1);
+        Physics.Raycast(origin, -_meshModel.transform.right, out _wallLeft, 1);
+        Physics.Raycast(origin, _meshModel.transform.forward, out _wallFront, 1);
+        Physics.Raycast(origin, -_meshModel.transform.forward, out _wallBack, 1);
     }
     
-    void CheckClimbableWall()
+    private void OnDrawGizmos()
     {
-        RaycastHit hit = new();
-        Physics.Raycast(transform.position, _meshModel.transform.forward, out hit, 0.7f);
-        _canClimb = hit.collider && hit.collider.CompareTag("Wall");
-    }
+        if (_meshModel == null)
+            return;
 
-    public bool TryGetWall(out RaycastHit wallHit)
-    {
-        Vector3 origin = transform.position;
+        Vector3 origin = _meshModel.transform.position;
+        float distance = 1f;
 
-        bool hitRight = Physics.Raycast(
-            origin,
-            _meshModel.transform.right,
-            out RaycastHit rightHit,
-            1
-        );
+        Transform meshTransform = _meshModel.transform;
 
-        bool hitLeft = Physics.Raycast(
-            origin,
-            -_meshModel.transform.right,
-            out RaycastHit leftHit,
-            1
-        );
+        Gizmos.color = Color.green;
+        Gizmos.DrawLine(origin, origin + Vector3.down * distance);
 
-        if (hitRight)
-        {
-            wallHit = rightHit;
-            return true;
-        }
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawLine(origin, origin + meshTransform.up * distance);
 
-        if (hitLeft)
-        {
-            wallHit = leftHit;
-            return true;
-        }
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(origin, origin + meshTransform.right * distance);
 
-        wallHit = default;
-        return false;
+        Gizmos.color = Color.magenta;
+        Gizmos.DrawLine(origin, origin - meshTransform.right * distance);
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawLine(origin, origin + meshTransform.forward * distance);
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawLine(origin, origin - meshTransform.forward * distance);
     }
     #endregion
 }

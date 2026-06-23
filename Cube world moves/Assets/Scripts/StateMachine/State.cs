@@ -30,4 +30,5 @@ public abstract class State : MonoBehaviour
     }
     
     public abstract EPlayerState GetEnumType();
+
 }

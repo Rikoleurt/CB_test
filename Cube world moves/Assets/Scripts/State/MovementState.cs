@@ -67,7 +67,7 @@ public class MovementState : State
 
         _playerPhysics.SetAcceleration(acceleration);
 
-        if (_playerPhysics.CanClimb && _controller.ClimbInput)
+        if (_playerPhysics.isWallFront && _controller.ClimbInput)
         {
             _stateMachine.Transition(EPlayerState.CLIMB);
         }

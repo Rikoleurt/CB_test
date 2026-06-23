@@ -30,7 +30,7 @@ public class GroundState : MovementState
             _playerPhysics.AddAcceleration(jumpForce * Vector3.up);
             canJump = false;
         }
-        if (!_playerPhysics.IsGrounded) _stateMachine.Transition(EPlayerState.AIR);
+        if (!_playerPhysics.isWallDown) _stateMachine.Transition(EPlayerState.AIR);
         
     }
     

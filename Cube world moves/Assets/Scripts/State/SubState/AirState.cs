@@ -17,8 +17,8 @@ public class AirState : MovementState
     public override void UpdateState()
     {
         base.UpdateState();
-        if(_playerPhysics.IsGrounded) _stateMachine.Transition(EPlayerState.GROUND);
-        if(_playerPhysics.TryGetWall(out RaycastHit wallHit)) _stateMachine.Transition(EPlayerState.WALLRUN);
+        if(_playerPhysics.isWallDown) _stateMachine.Transition(EPlayerState.GROUND);
+        if(_playerPhysics.isWallSide) _stateMachine.Transition(EPlayerState.WALLRUN);
     }
     
     public override EPlayerState GetEnumType()

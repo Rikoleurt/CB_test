@@ -21,7 +21,7 @@ public class AirLockState : State
 
     public override void UpdateState()
     {
-        if (_playerPhysics.IsGrounded)
+        if (_playerPhysics.isWallDown)
         {
             _stateMachine.Transition(EPlayerState.GROUND);
             return;
