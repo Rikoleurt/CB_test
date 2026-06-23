@@ -1,25 +1,31 @@
 ﻿using System.Collections;
+using NaughtyAttributes;
 using UnityEngine;
 
 public class AirLockState : State
 {
-    [SerializeField] private int nbFrames;
+    [ShowNonSerializedField] private float _secondsWaited;
+    [SerializeField] private float _secondsUntilClimb;
+    [SerializeField] private float _secondsUntilAir;
+    
     private Coroutine coroutine;
     private const EPlayerState ENUMTYPE = EPlayerState.AIRLOCK;
-
+    private bool _isClimbLocked = true;
+    private bool _isAirLocked = true;
+    
     public override void EnterState()
     {
-        coroutine = StartCoroutine(LockWindow());
+        ResetState();
     }
 
     public override void ExitState()
     {
-        StopCoroutine(coroutine);
-        coroutine = null;
+        ResetState();
     }
 
     public override void UpdateState()
     {
+        HandleLockWindow();
         MakeTransition();
     }
 
@@ -35,17 +41,38 @@ public class AirLockState : State
             _stateMachine.Transition(EPlayerState.GROUND);
             return;
         }
-    }
 
-    IEnumerator LockWindow()
-    {
-        int framesToWait = nbFrames;
-        while (framesToWait > 0)
+        if (!_isClimbLocked && _controller.ClimbInput && _playerPhysics.isWallFront)
         {
-            yield return new WaitForSeconds(Time.fixedDeltaTime);
-            framesToWait--;
+            _stateMachine.Transition(EPlayerState.CLIMB);
+            return;
         }
 
-        _stateMachine.Transition(EPlayerState.AIR);
+        if (!_isAirLocked)
+        {
+            _stateMachine.Transition(EPlayerState.AIR);
+            return;
+        }
+    }
+    
+
+    void HandleLockWindow()
+    {
+        _secondsWaited += Time.fixedDeltaTime;
+        if (_secondsWaited > _secondsUntilClimb)
+        {
+           _isClimbLocked = false;
+        }
+        if (_secondsWaited > _secondsUntilAir)
+        {
+            _isAirLocked = false;
+        }
+    }
+
+    void ResetState()
+    {
+        _isClimbLocked = true;
+        _isAirLocked = true;
+        _secondsWaited = 0;
     }
 }

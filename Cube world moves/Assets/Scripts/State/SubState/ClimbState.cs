@@ -29,15 +29,24 @@ public class ClimbState : MovementState
               _controller.VerticalInput * _moveSpeed * meshModel.transform.up 
             + _controller.HorizontalInput * _moveSpeed * meshModel.transform.right
             + -wallHit.normal.normalized * _wallStickForce
-            ;
+              ;
         
         if (_controller.JumpInput)
         {
-            if(acceleration.y >= 0) acceleration *= _jumpForce;
-            else acceleration = wallHit.normal * _jumpForce + Vector3.up;
-
+            if (acceleration.y >= 0) acceleration *= _jumpForce;
+            else acceleration = -wallHit.normal * _jumpForce + Vector3.up;
+            
+            acceleration += wallHit.normal.normalized * _wallStickForce;
+            _stateMachine.Transition(EPlayerState.AIRLOCK);
+            return;
         }
-
+        
+  
+        if (Vector3.Angle(wallHit.normal, Vector3.up) < 35)
+        {
+            _stateMachine.Transition(EPlayerState.GROUND);
+        }
+        
         _playerPhysics.SetAcceleration(acceleration);
 
         meshModel.transform.rotation = Quaternion.LookRotation(-wallHit.normal);
@@ -53,5 +62,4 @@ public class ClimbState : MovementState
     {
         return ENUMTYPE;
     }
-    
 }
