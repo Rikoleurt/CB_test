@@ -3,15 +3,16 @@ using UnityEngine;
 
 public class WallRunState : MovementState
 {
-    [SerializeField] private float jumpForce = 8f;
-    [SerializeField] private float wallJumpSideForce = 8f;
-    [SerializeField] private float gravityWhileWallRunning = 0.2f;
+    [SerializeField] private float _jumpForce = 8f;
+    [SerializeField] private float _wallJumpSideForce = 8f;
+    [SerializeField] private float _gravityWhileWallRunning = 0.2f;
+    [SerializeField] private float _wallStickForce = 3f;
 
     private const EPlayerState ENUMTYPE = EPlayerState.WALLRUN;
 
     public override void EnterState()
     {
-        _playerPhysics.SetGravity(gravityWhileWallRunning);
+        _playerPhysics.SetGravity(_gravityWhileWallRunning);
         print("Entering WallRun State");
     }
 
@@ -33,13 +34,15 @@ public class WallRunState : MovementState
         if (Vector3.Dot(wallRunDirection, meshModel.transform.forward) < 0f) wallRunDirection = -wallRunDirection;
         
         meshModel.transform.rotation = Quaternion.LookRotation(wallRunDirection, Vector3.up);
-        acceleration = wallRunDirection * (_controller.VerticalInput * moveSpeed);
+        acceleration = wallRunDirection * (_controller.VerticalInput * _moveSpeed) + -wallNormal.normalized*_wallStickForce;
         
         if (_controller.JumpInput)
         {
             Vector3 jumpDirection =
-                Vector3.up * jumpForce +
-                wallNormal * wallJumpSideForce;
+                Vector3.up * _jumpForce +
+                wallNormal * _wallJumpSideForce;
+
+            acceleration += wallNormal.normalized*_wallStickForce;
 
             _playerPhysics.SetAcceleration(jumpDirection + acceleration);
             _stateMachine.Transition(EPlayerState.AIRLOCK);

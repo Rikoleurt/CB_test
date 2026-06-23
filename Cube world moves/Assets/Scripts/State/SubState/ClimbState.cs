@@ -1,12 +1,13 @@
+using TMPro;
 using UnityEngine;
 
 public class ClimbState : MovementState
 {
-    [SerializeField] private float jumpForce;
+    [SerializeField] private float _jumpForce = 8f;
+    [SerializeField] private float _wallStickForce = 3f;
     private const EPlayerState ENUMTYPE = EPlayerState.CLIMB;
     public override void EnterState()
     {
-        meshModel.CanRotating = false;
         _playerPhysics.SetAcceleration(Vector3.zero);
         _playerPhysics.SetGravity(0f); // Climbing gravity
         print("Entering Climb State");
@@ -14,7 +15,6 @@ public class ClimbState : MovementState
 
     public override void ExitState()
     {
-        meshModel.CanRotating = true;
         _playerPhysics.SetGravity(1f); // Base gravity
         print("Exiting Climb State");
     }
@@ -22,6 +22,25 @@ public class ClimbState : MovementState
     
     public override void UpdateState()
     {
+        if(_playerPhysics.isWallFront) _stateMachine.Transition(EPlayerState.AIR);
+
+        RaycastHit wallHit = _playerPhysics.WallFront;
+        acceleration = 
+              _controller.VerticalInput * _moveSpeed * meshModel.transform.up 
+            + _controller.HorizontalInput * _moveSpeed * meshModel.transform.right
+            + -wallHit.normal.normalized * _wallStickForce
+            ;
+        
+        if (_controller.JumpInput)
+        {
+            if(acceleration.y >= 0) acceleration *= _jumpForce;
+            else acceleration = wallHit.normal * _jumpForce + Vector3.up;
+
+        }
+
+        _playerPhysics.SetAcceleration(acceleration);
+
+        meshModel.transform.rotation = Quaternion.LookRotation(-wallHit.normal);
     }
     
 

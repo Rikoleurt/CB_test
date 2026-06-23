@@ -1,9 +1,9 @@
-﻿using UnityEngine;
+using UnityEngine;
 public class MovementState : State
 {
     
     [SerializeField] protected float maxSpeed = 10;
-    [SerializeField] protected float moveSpeed = 2;
+    [SerializeField] protected float _moveSpeed = 2;
 
     protected Vector3 acceleration;
 
