@@ -554,14 +554,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44a4f5e72a5d409ead424995e70d73ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Camera.CameraController
+  _baseProfile: {fileID: 11400000, guid: 72fc06ebc60cee8f5bba5b8e7c344b5c, type: 2}
   _posFollower: {fileID: 1783671940}
   _pivotTransform: {fileID: 1000654828}
   _camLook: {fileID: 935754334}
-  _sensitivityAngle: 0.3
-  _sensitivityHeight: 0.2
-  _moveSmoothSpeed: 15
-  _rotationSmoothSpeed: 15
-  _collisionRadius: 0.25
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -1194,12 +1190,7 @@ MonoBehaviour:
   _gravityWhileWallRunning: 0
   _wallStickForce: 3
   _cameraController: {fileID: 330585548}
-  forwardPosCoef: 1.74
-  wallNormalPosCoef: 3.05
-  heightPosCoef: 0.47
-  forwardLookCoef: 4.35
-  wallNormalLookCoef: 0.76
-  heightLookCoef: 1.04
+  _wallRunProfile: {fileID: 11400000, guid: 8e93dea3d5ffd943499d72419ccbb458, type: 2}
 --- !u!114 &705916302
 MonoBehaviour:
   m_ObjectHideFlags: 0

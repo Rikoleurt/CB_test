@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fb206267b35c688aaadc18ce3f326a5, type: 3}
   m_Name: WallRunProfile
   m_EditorClassIdentifier: Assembly-CSharp::CameraProfile
-  FOV: 70
+  FOV: 100
   _sensitivityAngle: 1
   _sensitivityHeight: 1
   _moveSmoothSpeed: 12
   _rotationSmoothSpeed: 15
   _collisionRadius: 0.25
-  CameraPosOffets: {x: 0, y: 0, z: 0}
-  CameraLookOffets: {x: 0, y: 0, z: 0}
+  CameraPosOffets: {x: 1.86, y: 0.91, z: 1.55}
+  CameraLookOffets: {x: 1.85, y: 0.76, z: 3.27}
