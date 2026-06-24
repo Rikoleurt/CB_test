@@ -10,13 +10,11 @@ public class ClimbState : MovementState
     {
         _playerPhysics.SetAcceleration(Vector3.zero);
         _playerPhysics.SetGravity(0f); // Climbing gravity
-        print("Entering Climb State");
     }
 
     public override void ExitState()
     {
         _playerPhysics.SetGravity(1f); // Base gravity
-        print("Exiting Climb State");
     }
     
     

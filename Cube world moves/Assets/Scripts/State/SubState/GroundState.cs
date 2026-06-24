@@ -9,14 +9,12 @@ public class GroundState : MovementState
     public override void EnterState()
     {
         canJump = true;
-        print("Entering Ground State");
     }
 
     public override void ExitState()
     {
         base.ExitState();
         canJump = false;
-        print("Exiting Ground State");
     }
 
     public override void UpdateState()
@@ -35,8 +33,17 @@ public class GroundState : MovementState
 
     public override void MakeTransition()
     {
-        if (!_playerPhysics.isWallDown) _stateMachine.Transition(EPlayerState.AIR);
-        if (_playerPhysics.isWallFront && _controller.ClimbInput) _stateMachine.Transition(EPlayerState.CLIMB);
+        if (!_playerPhysics.isWallDown)
+        {
+            _stateMachine.Transition(EPlayerState.AIR);
+            return;
+        }
+
+        if (_playerPhysics.isWallFront && _controller.ClimbInput)
+        {
+            _stateMachine.Transition(EPlayerState.CLIMB);
+            return;
+        }
         
     }
 

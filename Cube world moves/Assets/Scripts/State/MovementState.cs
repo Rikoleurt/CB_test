@@ -47,7 +47,6 @@ public class MovementState : State
         acceleration.z = groundAcceleration.z;
 
         _playerPhysics.SetAcceleration(acceleration);
-        MakeTransition();
     }
 
     public override EPlayerState GetEnumType()
@@ -79,10 +78,5 @@ public class MovementState : State
     
     public override void MakeTransition()
     {
-        if (_playerPhysics.isWallFront && _controller.ClimbInput)
-        {
-            _stateMachine.Transition(EPlayerState.CLIMB);
-            return;
-        }
     }
 }

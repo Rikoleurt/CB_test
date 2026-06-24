@@ -37,6 +37,7 @@ public class PlayerPhysics : MonoBehaviour
 
     public bool isWallSide => isWallLeft || isWallRight;
     
+    public RaycastHit WallSide => isWallRight ? _wallRight : _wallLeft;
     private void Start()
     {
         _meshModel = GetComponentInChildren<MeshModelController>();

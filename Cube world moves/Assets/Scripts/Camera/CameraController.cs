@@ -16,12 +16,13 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float _collisionRadius = 0.25f;
 
     private Controller _controller;
-
+    private StateMachine _stateMachine;
+    
     [ShowNonSerializedField] private float angle;
     [ShowNonSerializedField] private float height = .5f;
 
     private bool _cameraBlocked;
-
+    private bool isWallRunning;
     void Start()
     {
         _controller = Controller.Instance;
@@ -30,15 +31,39 @@ public class CameraController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        UpdateInput();
-        UpdateCameraRig();
-
+        if (!isWallRunning)
+        {
+            UpdateInput();
+            print("Fixed Update of Cam controller36 : " + _camLook.transform.localPosition);
+            UpdateCameraRig();
+            print("Fixed Update of Cam controller37 : " + _camLook.transform.localPosition);
+        }
+        
         Vector3 desiredPosition = _posFollower.transform.position;
+        print("Fixed Update of Cam controller42 : " + _camLook.transform.localPosition);
         Vector3 safePosition = ResolveBlockedPosition(desiredPosition);
-
+        print("Fixed Update of Cam controller44 : " + _camLook.transform.localPosition);
         Quaternion desiredRotation = GetLookRotationFromPosition(safePosition);
-
+        print("Fixed Update of Cam controller46 : " + _camLook.transform.localPosition);
         ApplySmoothTransform(safePosition, desiredRotation);
+        print("Fixed Update of Cam controller48 : " + _camLook.transform.localPosition);
+    }
+
+    public void UpdateWallRunCamera(Vector3 cameraPosition, Vector3 cameraLook)
+    {
+        _camLook.transform.position = cameraLook;
+        _posFollower.transform.position = cameraPosition;
+    }
+
+    public void SetIsWallRunning(bool value)
+    {
+        if (!value)
+        {
+            print("resetting camlook pos");
+            _camLook.transform.localPosition = Vector3.zero;
+            print("last pos print =" + _camLook.transform.localPosition );
+        }
+        isWallRunning = value;
     }
 
     private void UpdateInput()
@@ -122,7 +147,7 @@ public class CameraController : MonoBehaviour
 
         return origin + direction * safeDistance;
     }
-
+    
     void OnDrawGizmos()
     {
         Gizmos.color = Color.red;

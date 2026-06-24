@@ -28,6 +28,9 @@ public class StateMachine : MonoBehaviour
      */
     public void Transition(EPlayerState newState)
     {
+        if (currentState != null && currentState.GetEnumType() == newState)
+            return;
+        
         currentState.ExitState();
         currentState.enabled = false;
         currentState = PossibleStates[newState];
@@ -56,6 +59,10 @@ public class StateMachine : MonoBehaviour
         }
     }
 
+    public State GetCurrentState()
+    {
+        return currentState;
+    }
 
     void OnGUI()
     {

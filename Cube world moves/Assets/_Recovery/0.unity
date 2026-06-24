@@ -559,8 +559,8 @@ MonoBehaviour:
   _camLook: {fileID: 935754334}
   _sensitivityAngle: 0.3
   _sensitivityHeight: 0.2
-  _moveSmoothSpeed: 15
-  _rotationSmoothSpeed: 15
+  _moveSmoothSpeed: 50
+  _rotationSmoothSpeed: 50
   _collisionRadius: 0.25
 --- !u!1 &410087039
 GameObject:
@@ -1182,24 +1182,17 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 705916286}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 319d3e65b5804de78bf3202881f65f6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LeftWallRunState
   maxSpeed: 10
   _moveSpeed: 11
-  _jumpForce: 20
-  _wallJumpSideForce: 20
+  _jumpForce: 8
+  _wallJumpSideForce: 8
   _gravityWhileWallRunning: 0
   _wallStickForce: 3
-  _cameraController: {fileID: 330585548}
-  forwardPosCoef: 1.74
-  wallNormalPosCoef: 3.05
-  heightPosCoef: 0.47
-  forwardLookCoef: 4.35
-  wallNormalLookCoef: 0.76
-  heightLookCoef: 1.04
 --- !u!114 &705916302
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1276,7 +1269,7 @@ GameObject:
   m_Layer: 0
   m_Name: CamLook
   m_TagString: Untagged
-  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: -5442936267250999957, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -1458,7 +1451,7 @@ Transform:
   m_GameObject: {fileID: 1541280629}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.9884008, z: -0, w: 0.15186828}
-  m_LocalPosition: {x: 26.02, y: 18.8, z: 12.42}
+  m_LocalPosition: {x: 24.7, y: 18.8, z: 16.6}
   m_LocalScale: {x: 25, y: 50, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1589,7 +1582,7 @@ GameObject:
   m_Layer: 0
   m_Name: CamPos
   m_TagString: Untagged
-  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
