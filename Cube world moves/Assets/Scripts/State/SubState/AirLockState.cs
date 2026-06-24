@@ -26,7 +26,7 @@ public class AirLockState : State
     public override void UpdateState()
     {
         HandleLockWindow();
-        MakeTransition();
+        if(TryMakeTransition()) return;
     }
 
     public override EPlayerState GetEnumType()
@@ -34,25 +34,27 @@ public class AirLockState : State
         return ENUMTYPE;
     }
 
-    public override void MakeTransition()
+    public override bool TryMakeTransition()
     {
         if (_playerPhysics.isWallDown)
         {
             _stateMachine.Transition(EPlayerState.GROUND);
-            return;
+            return true;
         }
 
         if (!_isClimbLocked && _controller.ClimbInput && _playerPhysics.isWallFront)
         {
             _stateMachine.Transition(EPlayerState.CLIMB);
-            return;
+            return true;
         }
 
         if (!_isAirLocked)
         {
             _stateMachine.Transition(EPlayerState.AIR);
-            return;
+            return true;
         }
+
+        return false;
     }
     
 

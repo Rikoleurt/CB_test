@@ -15,7 +15,7 @@ public class AirState : MovementState
     public override void UpdateState()
     {
         base.UpdateState();
-        MakeTransition();
+        if(TryMakeTransition()) return;
     }
 
     public override EPlayerState GetEnumType()
@@ -23,23 +23,24 @@ public class AirState : MovementState
         return ENUMTYPE;
     }
 
-    public override void MakeTransition()
+    public override bool TryMakeTransition()
     {
         if (_playerPhysics.isWallDown)
         {
             _stateMachine.Transition(EPlayerState.GROUND);
-            return;
+            return true;
         }
         if (_playerPhysics.isWallSide)
         {
             _stateMachine.Transition(EPlayerState.WALLRUN);
-            return;
+            return true;
         }
 
         if (_playerPhysics.isWallFront && _controller.ClimbInput)
         {
             _stateMachine.Transition(EPlayerState.CLIMB);
-            return;
+            return true;
         }
+        return false;
     }
 }

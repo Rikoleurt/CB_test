@@ -38,13 +38,11 @@ public class WallRunState : MovementState
     {
         _playerPhysics.SetGravity(1f);
         _cameraController.SetIsWallRunning(false);
-        print("Exiting wall run state");
-        Debug.Break();
     }
 
     public override void UpdateState()
     {
-        MakeTransition();
+        if(TryMakeTransition()) return;
         RaycastHit wallHit = _playerPhysics.isWallRight ? _playerPhysics.WallRight : _playerPhysics.WallLeft;
         SnapModel(wallHit);
         HandleJump(wallHit);
@@ -64,7 +62,6 @@ public class WallRunState : MovementState
             ;
         _cameraController.UpdateWallRunCamera(newCameraPosition, newCameraLook);
         _playerPhysics.SetAcceleration(acceleration);
-        print("Fixed Update of Wall Run State : " + _camLook.transform.localPosition);
 
     }
 
@@ -103,20 +100,19 @@ public class WallRunState : MovementState
             return;
         }
     }
-    public override void MakeTransition()
+    public override bool TryMakeTransition()
     {
-        print("Making transition");
         if (_playerPhysics.isWallDown)
         {
             _stateMachine.Transition(EPlayerState.GROUND);
-            return;
+            return true;
         }
 
         if (!_playerPhysics.isWallLeft && !_playerPhysics.isWallRight)
         {
             _stateMachine.Transition(EPlayerState.AIR);
-            return;
+            return true;
         } 
-        print("Finished transitionning");
+        return false;
     }
 }

@@ -34,36 +34,35 @@ public class CameraController : MonoBehaviour
         if (!isWallRunning)
         {
             UpdateInput();
-            print("Fixed Update of Cam controller36 : " + _camLook.transform.localPosition);
             UpdateCameraRig();
-            print("Fixed Update of Cam controller37 : " + _camLook.transform.localPosition);
         }
         
         Vector3 desiredPosition = _posFollower.transform.position;
-        print("Fixed Update of Cam controller42 : " + _camLook.transform.localPosition);
         Vector3 safePosition = ResolveBlockedPosition(desiredPosition);
-        print("Fixed Update of Cam controller44 : " + _camLook.transform.localPosition);
         Quaternion desiredRotation = GetLookRotationFromPosition(safePosition);
-        print("Fixed Update of Cam controller46 : " + _camLook.transform.localPosition);
         ApplySmoothTransform(safePosition, desiredRotation);
-        print("Fixed Update of Cam controller48 : " + _camLook.transform.localPosition);
     }
 
     public void UpdateWallRunCamera(Vector3 cameraPosition, Vector3 cameraLook)
     {
+        if (!isWallRunning)
+        {
+            return;
+        }
+
         _camLook.transform.position = cameraLook;
         _posFollower.transform.position = cameraPosition;
     }
 
     public void SetIsWallRunning(bool value)
     {
+        isWallRunning = value;
+
         if (!value)
         {
-            print("resetting camlook pos");
             _camLook.transform.localPosition = Vector3.zero;
-            print("last pos print =" + _camLook.transform.localPosition );
+            Debug.Break();
         }
-        isWallRunning = value;
     }
 
     private void UpdateInput()

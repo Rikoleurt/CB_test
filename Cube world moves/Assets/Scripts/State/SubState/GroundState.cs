@@ -22,7 +22,7 @@ public class GroundState : MovementState
         base.UpdateState();
         SnapModel();
         HandleJump();
-        MakeTransition();
+        if(TryMakeTransition()) return;
     }
     
 
@@ -31,20 +31,20 @@ public class GroundState : MovementState
         return ENUMTYPE;
     }
 
-    public override void MakeTransition()
+    public override bool TryMakeTransition()
     {
         if (!_playerPhysics.isWallDown)
         {
             _stateMachine.Transition(EPlayerState.AIR);
-            return;
+            return true;
         }
 
         if (_playerPhysics.isWallFront && _controller.ClimbInput)
         {
             _stateMachine.Transition(EPlayerState.CLIMB);
-            return;
+            return true;
         }
-        
+        return false;
     }
 
     private void HandleJump()

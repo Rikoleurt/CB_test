@@ -22,7 +22,7 @@ public abstract class State : MonoBehaviour
     /**
      * Implement it to declare transitions between the state to the others.
      */
-    public abstract void MakeTransition();
+    public abstract bool TryMakeTransition();
     
     public virtual void InitState()
     {

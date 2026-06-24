@@ -13,7 +13,6 @@ public class StateMachine : MonoBehaviour
         foreach (State s in components)
         {
             PossibleStates.Add(s.GetEnumType(), s);
-            print(s.name);
         }
         
         InitAllStates();
@@ -31,10 +30,12 @@ public class StateMachine : MonoBehaviour
         if (currentState != null && currentState.GetEnumType() == newState)
             return;
         
+        print("Exiting : " + currentState.ToString());
         currentState.ExitState();
         currentState.enabled = false;
         currentState = PossibleStates[newState];
         currentState.enabled = true;
+        print("Entering : " + currentState.ToString());
         currentState.EnterState();
     }
     
@@ -68,7 +69,7 @@ public class StateMachine : MonoBehaviour
     {
         GUI.Label(
             new Rect(10, 10, 300, 30),
-            currentState != null ? currentState.ToString() : "No State"
+            this.transform.name + " : " +currentState != null ? currentState.ToString() : "No State"
         );
     }
 }

@@ -75,8 +75,9 @@ public class MovementState : State
         
         return moveDirection;
     }
-    
-    public override void MakeTransition()
+
+    public override bool TryMakeTransition()
     {
+        throw new System.NotImplementedException();
     }
 }
