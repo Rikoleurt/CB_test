@@ -3,17 +3,17 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
+
+    [SerializeField] CameraProfile _baseProfile;
+    [ShowNonSerializedField] CameraProfile _actualProfile;
+
+    Camera _camera;
+
     [SerializeField] private SplineFollower _posFollower;
     [SerializeField] private Transform _pivotTransform;
     [SerializeField] private CameraLook _camLook;
 
-    [SerializeField] private float _sensitivityAngle = 1f;
-    [SerializeField] private float _sensitivityHeight = 1f;
 
-    [SerializeField] private float _moveSmoothSpeed = 12f;
-    [SerializeField] private float _rotationSmoothSpeed = 15f;
-
-    [SerializeField] private float _collisionRadius = 0.25f;
 
     private Controller _controller;
     private StateMachine _stateMachine;
@@ -25,6 +25,8 @@ public class CameraController : MonoBehaviour
     private bool isWallRunning;
     void Start()
     {
+        _actualProfile = _baseProfile;
+        _camera = GetComponent<Camera>();
         _controller = Controller.Instance;
         Cursor.lockState = CursorLockMode.Locked;
     }
@@ -41,17 +43,36 @@ public class CameraController : MonoBehaviour
         Vector3 safePosition = ResolveBlockedPosition(desiredPosition);
         Quaternion desiredRotation = GetLookRotationFromPosition(safePosition);
         ApplySmoothTransform(safePosition, desiredRotation);
+
     }
 
-    public void UpdateWallRunCamera(Vector3 cameraPosition, Vector3 cameraLook)
+    public void UpdateWallRunCamera(Vector3 wallNormal, Vector3 forward, Vector3 up)
     {
         if (!isWallRunning)
         {
             return;
         }
 
-        _camLook.transform.position = cameraLook;
-        _posFollower.transform.position = cameraPosition;
+        Vector3 origin = _pivotTransform.position;
+
+        wallNormal.Normalize();
+        forward.Normalize();
+        up.Normalize();
+
+        Vector3 cameraLook =
+                wallNormal * _actualProfile.CameraLookOffets.x
+                + forward * _actualProfile.CameraLookOffets.z
+                + up* _actualProfile.CameraLookOffets.y
+            ;
+        
+        Vector3 cameraPosition = 
+                wallNormal * _actualProfile.CameraPosOffets.x
+                + -forward * _actualProfile.CameraPosOffets.z
+                + up * _actualProfile.CameraPosOffets.y
+            ;
+
+         _camLook.transform.position = origin + cameraLook;
+        _posFollower.transform.position = origin + cameraPosition;
     }
 
     public void SetIsWallRunning(bool value)
@@ -61,18 +82,25 @@ public class CameraController : MonoBehaviour
         if (!value)
         {
             _camLook.transform.localPosition = Vector3.zero;
-            Debug.Break();
         }
+    }
+    public void SetCameraProfile(CameraProfile _newProfile)
+    {
+        _actualProfile = _newProfile;
+    }
+    public void SetBaseCameraProfile()
+    {
+         _actualProfile = _baseProfile;
     }
 
     private void UpdateInput()
     {
         Vector2 deltaLook = _controller.DeltaLook;
 
-        angle += _sensitivityAngle * 100f * deltaLook.x;
+        angle += _actualProfile._sensitivityAngle * 100f * deltaLook.x;
         angle %= 360f;
 
-        height += _sensitivityHeight * deltaLook.y;
+        height += _actualProfile._sensitivityHeight * deltaLook.y;
         height = Mathf.Clamp01(height);
     }
 
@@ -96,7 +124,7 @@ public class CameraController : MonoBehaviour
 
     private void ApplySmoothTransform(Vector3 desiredPosition, Quaternion desiredRotation)
     {
-        float rotT = 1f - Mathf.Exp(-_rotationSmoothSpeed * Time.deltaTime);
+        float rotT = 1f - Mathf.Exp(-_actualProfile._rotationSmoothSpeed * Time.deltaTime);
 
         if (_cameraBlocked)
         {
@@ -104,11 +132,20 @@ public class CameraController : MonoBehaviour
         }
         else
         {
-            float moveT = 1f - Mathf.Exp(-_moveSmoothSpeed * Time.deltaTime);
+            float moveT = 1f - Mathf.Exp(-_actualProfile._moveSmoothSpeed * Time.deltaTime);
             transform.position = Vector3.Slerp(transform.position, desiredPosition, moveT);
         }
 
         transform.rotation = Quaternion.Slerp(transform.rotation, desiredRotation, rotT);
+
+        if(_camera.fieldOfView !=_actualProfile.FOV && Mathf.Abs(_camera.fieldOfView-_actualProfile.FOV) > float.Epsilon)
+        {
+            _camera.fieldOfView = Mathf.Lerp(_camera.fieldOfView,_actualProfile.FOV,.4f);
+        }
+        else
+        {
+            _camera.fieldOfView =_actualProfile.FOV;
+        }
     }
 
     private Vector3 ResolveBlockedPosition(Vector3 desiredPosition)
@@ -129,7 +166,7 @@ public class CameraController : MonoBehaviour
 
         bool blocked = Physics.SphereCast(
             origin,
-            _collisionRadius,
+            _actualProfile._collisionRadius,
             direction,
             out RaycastHit hit,
             distance
@@ -150,6 +187,6 @@ public class CameraController : MonoBehaviour
     void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, _collisionRadius);
+        Gizmos.DrawWireSphere(transform.position, _actualProfile._collisionRadius);
     }
 }
