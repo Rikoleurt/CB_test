@@ -61,7 +61,6 @@ public class CameraController : MonoBehaviour
         if (!value)
         {
             _camLook.transform.localPosition = Vector3.zero;
-            Debug.Break();
         }
     }
 

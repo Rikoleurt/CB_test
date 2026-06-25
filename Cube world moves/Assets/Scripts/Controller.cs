@@ -19,6 +19,7 @@ public class Controller : MonoBehaviour
     [SerializeField] float _verticalInput;
     [SerializeField] bool _jumpInput;
     [SerializeField] bool _climbInput;
+    [SerializeField] bool _wallRunInput;
     [SerializeField] protected Vector3 acceleration;
     [SerializeField] private Vector2 _deltaLook = new();
     
@@ -30,6 +31,8 @@ public class Controller : MonoBehaviour
 
     public Vector2 DeltaLookRaw => _deltaLook;
     public Vector2 DeltaLook => _deltaLook/100;
+
+    public bool WallRunInput => _wallRunInput;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -71,6 +74,11 @@ public class Controller : MonoBehaviour
         if (callback.canceled) _climbInput = false;
     }
 
+    public void ReceiveWallRunInput(InputAction.CallbackContext callback)
+    {
+        if (callback.performed) _wallRunInput = true;
+        if (callback.canceled) _wallRunInput = false;
+    }
     public void ReceiveMouseMovement(InputAction.CallbackContext callback)
     {
         if (callback.performed) _deltaLook = callback.ReadValue<Vector2>();

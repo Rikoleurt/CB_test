@@ -47,7 +47,6 @@ public class AirLockState : State
             _stateMachine.Transition(EPlayerState.CLIMB);
             return true;
         }
-
         if (!_isAirLocked)
         {
             _stateMachine.Transition(EPlayerState.AIR);

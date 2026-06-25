@@ -1,9 +1,10 @@
+using NaughtyAttributes;
 using UnityEngine;
 
 public class AirState : MovementState
 {
     private const EPlayerState ENUMTYPE = EPlayerState.AIR;
-
+    
     public override void EnterState()
     {
     }
@@ -30,9 +31,15 @@ public class AirState : MovementState
             _stateMachine.Transition(EPlayerState.GROUND);
             return true;
         }
-        if (_playerPhysics.isWallSide)
+        if (_playerPhysics.isWallSide && _controller.WallRunInput)
         {
             _stateMachine.Transition(EPlayerState.WALLRUN);
+            return true;
+        }
+
+        if (_playerPhysics.isWallSide)
+        {
+            _stateMachine.Transition(EPlayerState.WALLSLIDE);
             return true;
         }
 

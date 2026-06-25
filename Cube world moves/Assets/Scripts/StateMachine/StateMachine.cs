@@ -30,12 +30,10 @@ public class StateMachine : MonoBehaviour
         if (currentState != null && currentState.GetEnumType() == newState)
             return;
         
-        print("Exiting : " + currentState.ToString());
         currentState.ExitState();
         currentState.enabled = false;
         currentState = PossibleStates[newState];
         currentState.enabled = true;
-        print("Entering : " + currentState.ToString());
         currentState.EnterState();
     }
     
