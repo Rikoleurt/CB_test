@@ -7,10 +7,11 @@ public class WallSlideState : MovementState
     private bool _hasWallJumped;
     [SerializeField] private float _wallJumpSideForce;
     [SerializeField] private float _jumpForce;
+    
     public override void EnterState()
     {
         _playerPhysics.SetGravity(0.1f);
-        _playerPhysics.SetAcceleration(0.1f * acceleration);
+        _playerPhysics.SetAcceleration(0.1f * acceleration); // To stop previous acceleration
     }
 
     public override void ExitState()
