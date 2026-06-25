@@ -5,13 +5,15 @@ public class WallSlideState : MovementState
     private EPlayerState ENUMTYPE = EPlayerState.WALLSLIDE;
     private Vector3 _oldWallHitNormal;
     private bool _hasWallJumped;
+    [SerializeField] private float _wallFriction;
     [SerializeField] private float _wallJumpSideForce;
     [SerializeField] private float _jumpForce;
     
     public override void EnterState()
     {
         _playerPhysics.SetGravity(0.1f);
-        _playerPhysics.SetAcceleration(0.1f * acceleration); // To stop previous acceleration
+        _playerPhysics.SetAcceleration(0.05f * acceleration); // To stop previous acceleration
+       
     }
 
     public override void ExitState()
@@ -24,6 +26,7 @@ public class WallSlideState : MovementState
     public override void UpdateState()
     {
         base.UpdateState();
+        _playerPhysics.SetAcceleration(new Vector3(_wallFriction * acceleration.x, acceleration.y, _wallFriction * acceleration.z));
         if (_controller.JumpInput)
         {
             WallJump();
@@ -61,7 +64,6 @@ public class WallSlideState : MovementState
     private void WallJump()
     {
         RaycastHit wallHit = _playerPhysics.isWallRight ? _playerPhysics.WallRight : _playerPhysics.WallLeft;
-        print(_oldWallHitNormal + "," + wallHit.normal.normalized);
         if (_hasWallJumped && Vector3.Dot(_oldWallHitNormal, wallHit.normal.normalized) > 0.5)
         {
             return;

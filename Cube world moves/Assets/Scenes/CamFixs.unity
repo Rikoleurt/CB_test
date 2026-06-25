@@ -1454,15 +1454,16 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 705916286}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7c2c22358a1f4d69ae7f76eeea1116eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WallSlideState
   maxSpeed: 10
   _moveSpeed: 2
-  _wallJumpSideForce: 3
-  _jumpForce: 6.5
+  _wallFriction: 0.7
+  _wallJumpSideForce: 15
+  _jumpForce: 7.5
 --- !u!1 &821273620
 GameObject:
   m_ObjectHideFlags: 0
@@ -2321,7 +2322,6 @@ SceneRoots:
   - {fileID: 705916291}
   - {fileID: 439289938}
   - {fileID: 689573996}
-  - {fileID: 368258760}
   - {fileID: 77378930}
   - {fileID: 1541280633}
   - {fileID: 597282227}
