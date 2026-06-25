@@ -9,12 +9,12 @@ public class ClimbState : MovementState
     public override void EnterState()
     {
         _playerPhysics.SetAcceleration(Vector3.zero);
-        _playerPhysics.SetGravity(0f); // Climbing gravity
+        _playerPhysics.SetFactorGravity(0f); // Climbing gravity
     }
 
     public override void ExitState()
     {
-        _playerPhysics.SetGravity(1f); // Base gravity
+        _playerPhysics.SetFactorGravity(1f); // Base gravity
     }
     
     

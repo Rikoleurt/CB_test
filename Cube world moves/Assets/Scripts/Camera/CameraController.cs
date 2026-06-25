@@ -186,6 +186,7 @@ public class CameraController : MonoBehaviour
     
     void OnDrawGizmos()
     {
+        if(_actualProfile == null) return;
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, _actualProfile._collisionRadius);
     }
