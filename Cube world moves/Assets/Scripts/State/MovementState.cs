@@ -46,6 +46,8 @@ public class MovementState : State
         acceleration.x = groundAcceleration.x;
         acceleration.z = groundAcceleration.z;
 
+        meshModel.UpdateModelRotation(pivotController.transform.eulerAngles.y);
+
         _playerPhysics.SetAcceleration(acceleration);
     }
 

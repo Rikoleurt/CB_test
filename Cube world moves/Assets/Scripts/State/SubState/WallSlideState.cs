@@ -1,43 +1,46 @@
 using NaughtyAttributes;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 public class WallSlideState : MovementState
 {
     private EPlayerState ENUMTYPE = EPlayerState.WALLSLIDE;
     private Vector3 _oldWallHitNormal;
-    private bool _hasWallJumped;
     [SerializeField] private float _wallFriction;
     [SerializeField] private float _wallJumpSideForce;
-    [SerializeField] private float _jumpForce;
+    [SerializeField] private float _jumpUpForce;
+    [SerializeField] private float _gravityFactorWithWall = 0.1f;
     
     public override void EnterState()
     {
-        _playerPhysics.SetFactorGravity(0.1f);
-        _playerPhysics.SetAcceleration(0.1f * acceleration); // To stop previous acceleration
+        _playerPhysics.SetFactorGravity(_gravityFactorWithWall);
+        _playerPhysics.SetAcceleration(0.1f * _playerPhysics.Acceleration); // To stop previous acceleration
     }
 
     public override void ExitState()
     {
         _playerPhysics.SetFactorGravity(1);
-        _hasWallJumped = false;
         
     }
 
     public override void UpdateState()
     {
-        base.UpdateState();
-        _playerPhysics.SetAcceleration(new Vector3(_wallFriction * acceleration.x, acceleration.y, _wallFriction * acceleration.z));
+        if(TryMakeTransition()) return;
+        
+        //_playerPhysics.SetAcceleration(new Vector3(_wallFriction * acceleration.x, acceleration.y, _wallFriction * acceleration.z));
+        
         if (_controller.JumpInput)
         {
             WallJump();
         }
-        if(TryMakeTransition()) return;
+        
+        
     }
 
     public override bool TryMakeTransition()
     {
         if (!_playerPhysics.isWallSide)
         {
-            _stateMachine.Transition(EPlayerState.AIR);
+            _stateMachine.Transition(EPlayerState.AIRLOCK);
             return true;
         }
 
@@ -62,18 +65,20 @@ public class WallSlideState : MovementState
     
     private void WallJump()
     {
-        RaycastHit wallHit = _playerPhysics.isWallRight ? _playerPhysics.WallRight : _playerPhysics.WallLeft;
-        if (_hasWallJumped && Vector3.Dot(_oldWallHitNormal, wallHit.normal.normalized) > 0.5)
+        RaycastHit wallHit = _playerPhysics.WallSide;
+        print(Vector3.Dot(_oldWallHitNormal, wallHit.normal.normalized));
+        if (Vector3.Dot(_oldWallHitNormal, wallHit.normal.normalized) > 0.5)
         {
             return;
         }
         
-        Vector3 jumpDirection = Vector3.up * _jumpForce + wallHit.normal * _wallJumpSideForce;
+        Vector3 jumpDirection = Vector3.up * _jumpUpForce + wallHit.normal * _wallJumpSideForce;
         
-        acceleration += jumpDirection;
+        acceleration = jumpDirection;
         _playerPhysics.SetAcceleration(acceleration);
-        _hasWallJumped = true;
         _oldWallHitNormal = wallHit.normal.normalized;
         
+        _stateMachine.Transition(EPlayerState.AIRLOCK);
+        return;
     }
 }

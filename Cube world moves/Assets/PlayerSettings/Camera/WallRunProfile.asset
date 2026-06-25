@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fb206267b35c688aaadc18ce3f326a5, type: 3}
   m_Name: WallRunProfile
   m_EditorClassIdentifier: Assembly-CSharp::CameraProfile
+  _canPlayerControlCamera: 0
   FOV: 100
   _sensitivityAngle: 1
   _sensitivityHeight: 1

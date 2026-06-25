@@ -1,4 +1,5 @@
 using NaughtyAttributes;
+using TMPro;
 using UnityEngine;
 
 public class CameraController : MonoBehaviour
@@ -22,7 +23,6 @@ public class CameraController : MonoBehaviour
     [ShowNonSerializedField] private float height = .5f;
 
     private bool _cameraBlocked;
-    private bool isWallRunning;
     void Start()
     {
         _actualProfile = _baseProfile;
@@ -33,7 +33,7 @@ public class CameraController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (!isWallRunning)
+        if (_actualProfile._canPlayerControlCamera)
         {
             UpdateInput();
             UpdateCameraRig();
@@ -48,10 +48,6 @@ public class CameraController : MonoBehaviour
 
     public void UpdateWallRunCamera(Vector3 wallNormal, Vector3 forward, Vector3 up)
     {
-        if (!isWallRunning)
-        {
-            return;
-        }
 
         Vector3 origin = _pivotTransform.position;
 
@@ -73,17 +69,14 @@ public class CameraController : MonoBehaviour
 
          _camLook.transform.position = origin + cameraLook;
         _posFollower.transform.position = origin + cameraPosition;
+
+
+        Vector3 flatForward = Vector3.ProjectOnPlane(forward, Vector3.up);
+        _pivotTransform.rotation = Quaternion.LookRotation(flatForward.normalized, Vector3.up);
+        angle = _pivotTransform.eulerAngles.y;
+
     }
 
-    public void SetIsWallRunning(bool value)
-    {
-        isWallRunning = value;
-
-        if (!value)
-        {
-            _camLook.transform.localPosition = Vector3.zero;
-        }
-    }
     public void SetCameraProfile(CameraProfile _newProfile)
     {
         _actualProfile = _newProfile;

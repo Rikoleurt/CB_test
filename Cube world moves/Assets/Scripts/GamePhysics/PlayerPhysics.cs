@@ -72,6 +72,7 @@ public class PlayerPhysics : MonoBehaviour
     private void FixedUpdate()
     {
         CheckGround();
+        CheckWalls();
 
         HandleVelocity();
 
@@ -80,7 +81,6 @@ public class PlayerPhysics : MonoBehaviour
         MoveAndSlide(movement);
 
         CheckGround();
-        CheckWalls();
     }
 
     #region Velocity
@@ -254,6 +254,7 @@ public class PlayerPhysics : MonoBehaviour
         CastWall(-meshTransform.right, out _wallLeft);
         CastWall(meshTransform.forward, out _wallFront);
         CastWall(-meshTransform.forward, out _wallBack);
+
 
         CheckCeiling(meshTransform.up);
     }

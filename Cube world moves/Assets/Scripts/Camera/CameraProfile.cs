@@ -4,6 +4,7 @@ using UnityEngine;
 public class CameraProfile : ScriptableObject
 {
 
+    public bool _canPlayerControlCamera = true;
     public float FOV;
     public float _sensitivityAngle = 1f;
     public float _sensitivityHeight = 1f;
