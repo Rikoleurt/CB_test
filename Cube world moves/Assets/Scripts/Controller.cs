@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,35 +9,22 @@ public class Controller : MonoBehaviour
         if(Instance == null) Instance = this;
         else Destroy(this);
     }
-    void OnApplicationQuit()
-    {
-        Instance = null;
-    }
 
     [SerializeField] float _horizontalInput;
     [SerializeField] float _verticalInput;
     [SerializeField] bool _jumpInput;
     [SerializeField] bool _climbInput;
     [SerializeField] bool _wallRunInput;
-    [SerializeField] protected Vector3 acceleration;
-    [SerializeField] private Vector2 _deltaLook = new();
+    [SerializeField] private Vector2 _deltaLook;
     
     private float angle;
     public bool JumpInput => _jumpInput;
     public float HorizontalInput => _horizontalInput;
     public float VerticalInput => _verticalInput;
     public bool ClimbInput => _climbInput;
-
     public Vector2 DeltaLookRaw => _deltaLook;
     public Vector2 DeltaLook => _deltaLook/100;
-
     public bool WallRunInput => _wallRunInput;
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
     
     #region Movement
     public void ReceiveMoveInput(InputAction.CallbackContext callback)
@@ -62,11 +48,6 @@ public class Controller : MonoBehaviour
         if(callback.performed) _jumpInput = true;
         if(callback.canceled) _jumpInput = false;
     }
-
-    public void ReceiveDashInput(InputAction.CallbackContext callback)
-    {
-        
-    }
     
     public void ReceiveClimbInput(InputAction.CallbackContext callback)
     {
@@ -84,7 +65,5 @@ public class Controller : MonoBehaviour
         if (callback.performed) _deltaLook = callback.ReadValue<Vector2>();
         if(callback.canceled) _deltaLook = Vector2.zero;
     }
-    
-    
     #endregion
 }

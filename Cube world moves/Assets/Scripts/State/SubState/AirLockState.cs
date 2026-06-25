@@ -5,6 +5,7 @@ using UnityEngine;
 public class AirLockState : State
 {
     [ShowNonSerializedField] private float _secondsWaited;
+    
     [SerializeField] private float _secondsUntilClimb;
     [SerializeField] private float _secondsUntilAir;
     

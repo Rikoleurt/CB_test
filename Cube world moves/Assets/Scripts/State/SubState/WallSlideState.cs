@@ -3,12 +3,14 @@ using UnityEngine;
 using UnityEngine.Rendering.Universal;
 public class WallSlideState : MovementState
 {
-    private EPlayerState ENUMTYPE = EPlayerState.WALLSLIDE;
-    private Vector3 _oldWallHitNormal;
+    
     [SerializeField] private float _wallFriction;
     [SerializeField] private float _wallJumpSideForce;
     [SerializeField] private float _jumpUpForce;
     [SerializeField] private float _gravityFactorWithWall = 0.1f;
+    
+    private EPlayerState ENUMTYPE = EPlayerState.WALLSLIDE;
+    private Vector3 _oldWallHitNormal;
     
     public override void EnterState()
     {
@@ -19,7 +21,6 @@ public class WallSlideState : MovementState
     public override void ExitState()
     {
         _playerPhysics.SetFactorGravity(1);
-        
     }
 
     public override void UpdateState()
@@ -27,13 +28,10 @@ public class WallSlideState : MovementState
         if(TryMakeTransition()) return;
         
         //_playerPhysics.SetAcceleration(new Vector3(_wallFriction * acceleration.x, acceleration.y, _wallFriction * acceleration.z));
-        
         if (_controller.JumpInput)
         {
             WallJump();
         }
-        
-        
     }
 
     public override bool TryMakeTransition()
@@ -66,7 +64,7 @@ public class WallSlideState : MovementState
     private void WallJump()
     {
         RaycastHit wallHit = _playerPhysics.WallSide;
-        print(Vector3.Dot(_oldWallHitNormal, wallHit.normal.normalized));
+
         if (Vector3.Dot(_oldWallHitNormal, wallHit.normal.normalized) > 0.5)
         {
             return;

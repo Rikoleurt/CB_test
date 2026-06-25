@@ -5,7 +5,9 @@ public class ClimbState : MovementState
 {
     [SerializeField] private float _jumpForce = 8f;
     [SerializeField] private float _wallStickForce = 3f;
+    
     private const EPlayerState ENUMTYPE = EPlayerState.CLIMB;
+    
     public override void EnterState()
     {
         _playerPhysics.SetAcceleration(Vector3.zero);
@@ -24,14 +26,15 @@ public class ClimbState : MovementState
 
         RaycastHit wallHit = _playerPhysics.WallFront;
         acceleration = 
-              _controller.VerticalInput * _moveSpeed * meshModel.transform.up 
-            + _controller.HorizontalInput * _moveSpeed * meshModel.transform.right
+              _controller.VerticalInput * _accelerationRate * _meshModel.transform.up 
+            + _controller.HorizontalInput * _accelerationRate * _meshModel.transform.right
             + -wallHit.normal.normalized * _wallStickForce
               ;
         
         if (_controller.JumpInput)
         {
-            acceleration += wallHit.normal.normalized * _wallStickForce; // Suppress wall hit force  before jumping
+            acceleration += wallHit.normal.normalized * _wallStickForce; // Suppress wall hit force before jumping
+            
             if (acceleration.y >= 0) acceleration *= _jumpForce;
             else acceleration = wallHit.normal * _jumpForce + Vector3.up;
             
@@ -47,8 +50,8 @@ public class ClimbState : MovementState
         }
         
         _playerPhysics.SetAcceleration(acceleration);
-
-        meshModel.transform.rotation = Quaternion.LookRotation(-wallHit.normal);
+        
+        _meshModel.transform.rotation = Quaternion.LookRotation(-wallHit.normal);
     }
 
     public override bool TryMakeTransition()

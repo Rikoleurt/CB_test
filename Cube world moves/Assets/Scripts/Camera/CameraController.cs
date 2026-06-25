@@ -4,28 +4,23 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-
-    [SerializeField] CameraProfile _baseProfile;
-    [ShowNonSerializedField] CameraProfile _actualProfile;
-
-    Camera _camera;
-
     [SerializeField] private SplineFollower _posFollower;
     [SerializeField] private Transform _pivotTransform;
     [SerializeField] private CameraLook _camLook;
+    [SerializeField] private CameraProfile _baseProfile;
+    [ShowNonSerializedField] CameraProfile _currentProfile;
 
-
-
+    private Camera _camera;
     private Controller _controller;
     private StateMachine _stateMachine;
-    
+    private bool _cameraBlocked;
+
     [ShowNonSerializedField] private float angle;
     [ShowNonSerializedField] private float height = .5f;
 
-    private bool _cameraBlocked;
     void Start()
     {
-        _actualProfile = _baseProfile;
+        _currentProfile = _baseProfile;
         _camera = GetComponent<Camera>();
         _controller = Controller.Instance;
         Cursor.lockState = CursorLockMode.Locked;
@@ -33,22 +28,20 @@ public class CameraController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (_actualProfile._canPlayerControlCamera)
+        if (_currentProfile._canPlayerControlCamera)
         {
             UpdateInput();
             UpdateCameraRig();
         }
-        
+
         Vector3 desiredPosition = _posFollower.transform.position;
         Vector3 safePosition = ResolveBlockedPosition(desiredPosition);
         Quaternion desiredRotation = GetLookRotationFromPosition(safePosition);
         ApplySmoothTransform(safePosition, desiredRotation);
-
     }
 
     public void UpdateWallRunCamera(Vector3 wallNormal, Vector3 forward, Vector3 up)
     {
-
         Vector3 origin = _pivotTransform.position;
 
         wallNormal.Normalize();
@@ -56,44 +49,34 @@ public class CameraController : MonoBehaviour
         up.Normalize();
 
         Vector3 cameraLook =
-                wallNormal * _actualProfile.CameraLookOffets.x
-                + forward * _actualProfile.CameraLookOffets.z
-                + up* _actualProfile.CameraLookOffets.y
-            ;
-        
-        Vector3 cameraPosition = 
-                wallNormal * _actualProfile.CameraPosOffets.x
-                + -forward * _actualProfile.CameraPosOffets.z
-                + up * _actualProfile.CameraPosOffets.y
+                wallNormal * _currentProfile.CameraLookOffets.x
+                + forward * _currentProfile.CameraLookOffets.z
+                + up * _currentProfile.CameraLookOffets.y
             ;
 
-         _camLook.transform.position = origin + cameraLook;
+        Vector3 cameraPosition =
+                wallNormal * _currentProfile.CameraPosOffets.x
+                + -forward * _currentProfile.CameraPosOffets.z
+                + up * _currentProfile.CameraPosOffets.y
+            ;
+
+        _camLook.transform.position = origin + cameraLook;
         _posFollower.transform.position = origin + cameraPosition;
 
 
         Vector3 flatForward = Vector3.ProjectOnPlane(forward, Vector3.up);
         _pivotTransform.rotation = Quaternion.LookRotation(flatForward.normalized, Vector3.up);
         angle = _pivotTransform.eulerAngles.y;
-
-    }
-
-    public void SetCameraProfile(CameraProfile _newProfile)
-    {
-        _actualProfile = _newProfile;
-    }
-    public void SetBaseCameraProfile()
-    {
-         _actualProfile = _baseProfile;
     }
 
     private void UpdateInput()
     {
         Vector2 deltaLook = _controller.DeltaLook;
 
-        angle += _actualProfile._sensitivityAngle * 100f * deltaLook.x;
+        angle += _currentProfile._sensitivityAngle * 100f * deltaLook.x;
         angle %= 360f;
 
-        height += _actualProfile._sensitivityHeight * deltaLook.y;
+        height += _currentProfile._sensitivityHeight * deltaLook.y;
         height = Mathf.Clamp01(height);
     }
 
@@ -117,7 +100,7 @@ public class CameraController : MonoBehaviour
 
     private void ApplySmoothTransform(Vector3 desiredPosition, Quaternion desiredRotation)
     {
-        float rotT = 1f - Mathf.Exp(-_actualProfile._rotationSmoothSpeed * Time.deltaTime);
+        float rotT = 1f - Mathf.Exp(-_currentProfile._rotationSmoothSpeed * Time.deltaTime);
 
         if (_cameraBlocked)
         {
@@ -125,20 +108,28 @@ public class CameraController : MonoBehaviour
         }
         else
         {
-            float moveT = 1f - Mathf.Exp(-_actualProfile._moveSmoothSpeed * Time.deltaTime);
+            float moveT = 1f - Mathf.Exp(-_currentProfile._moveSmoothSpeed * Time.deltaTime);
             transform.position = Vector3.Slerp(transform.position, desiredPosition, moveT);
         }
 
         transform.rotation = Quaternion.Slerp(transform.rotation, desiredRotation, rotT);
 
-        if(_camera.fieldOfView !=_actualProfile.FOV && Mathf.Abs(_camera.fieldOfView-_actualProfile.FOV) > float.Epsilon)
+        FOVSmoothing();
+    }
+
+    private void FOVSmoothing()
+    {
+        if (
+            _camera.fieldOfView != _currentProfile.FOV
+            && Mathf.Abs(_camera.fieldOfView - _currentProfile.FOV) > float.Epsilon
+        )
         {
-            _camera.fieldOfView = Mathf.Lerp(_camera.fieldOfView,_actualProfile.FOV,.4f);
+            _camera.fieldOfView = Mathf.Lerp(_camera.fieldOfView, _currentProfile.FOV, .4f);
         }
         else
         {
-            _camera.fieldOfView =_actualProfile.FOV;
-        }
+            _camera.fieldOfView = _currentProfile.FOV;
+        } 
     }
 
     private Vector3 ResolveBlockedPosition(Vector3 desiredPosition)
@@ -159,7 +150,7 @@ public class CameraController : MonoBehaviour
 
         bool blocked = Physics.SphereCast(
             origin,
-            _actualProfile._collisionRadius,
+            _currentProfile._collisionRadius,
             direction,
             out RaycastHit hit,
             distance
@@ -176,11 +167,22 @@ public class CameraController : MonoBehaviour
 
         return origin + direction * safeDistance;
     }
+
+    public void SetCameraProfile(CameraProfile newProfile)
+    {
+        _currentProfile = newProfile;
+    }
+
+    public void SetBaseCameraProfile()
+    {
+        _currentProfile = _baseProfile;
+    }
     
     void OnDrawGizmos()
     {
-        if(_actualProfile == null) return;
+        if (_currentProfile == null) return;
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, _actualProfile._collisionRadius);
+        Gizmos.DrawWireSphere(transform.position, _currentProfile._collisionRadius);
     }
+    
 }

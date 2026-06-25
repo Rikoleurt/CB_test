@@ -4,6 +4,7 @@ public class GroundState : MovementState
 {
     [SerializeField] private float jumpForce = 3;
     [SerializeField] private bool canJump;
+    
     private const EPlayerState ENUMTYPE = EPlayerState.GROUND;
 
     public override void EnterState()

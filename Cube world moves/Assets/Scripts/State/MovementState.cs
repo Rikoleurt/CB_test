@@ -1,15 +1,15 @@
 using UnityEngine;
+using UnityEngine.Serialization;
+
 public class MovementState : State
 {
-    
     [SerializeField] protected float maxSpeed = 10;
-    [SerializeField] protected float _moveSpeed = 2;
+    [SerializeField] protected float _accelerationRate = 2;
 
     protected Vector3 acceleration;
-
     protected PivotController pivotController;
-    protected MeshModelController meshModel;
-    protected Camera playerCam;
+    protected MeshModelController _meshModel;
+    protected Camera _playerCam;
 
     private const EPlayerState ENUMTYPE = EPlayerState.MOVEMENT;
     
@@ -17,8 +17,8 @@ public class MovementState : State
     {
         base.InitState();
         pivotController = GetComponentInChildren<PivotController>();
-        meshModel = GetComponentInChildren<MeshModelController>();
-        playerCam = Camera.main;
+        _meshModel = GetComponentInChildren<MeshModelController>();
+        _playerCam = Camera.main;
     }
     public override void EnterState()
     {
@@ -35,9 +35,7 @@ public class MovementState : State
         Vector3 moveDirection = ComputeMoveDirection();
         
         Vector3 groundAcceleration = new Vector3(acceleration.x, 0f, acceleration.z);
-        
-        groundAcceleration += moveDirection * _moveSpeed;
-        
+        groundAcceleration += moveDirection * _accelerationRate;
         groundAcceleration = Vector3.ClampMagnitude(
             groundAcceleration,
             maxSpeed
@@ -46,8 +44,7 @@ public class MovementState : State
         acceleration.x = groundAcceleration.x;
         acceleration.z = groundAcceleration.z;
 
-        meshModel.UpdateModelRotation(pivotController.transform.eulerAngles.y);
-
+        _meshModel.transform.eulerAngles = new Vector3(0, pivotController.transform.eulerAngles.y, 0);
         _playerPhysics.SetAcceleration(acceleration);
     }
 
@@ -58,8 +55,8 @@ public class MovementState : State
 
     private Vector3 ComputeMoveDirection()
     {
-        Vector3 camForward = Vector3.ProjectOnPlane(playerCam.transform.forward, Vector3.up).normalized;
-        Vector3 camRight = Vector3.ProjectOnPlane(playerCam.transform.right, Vector3.up).normalized;
+        Vector3 camForward = Vector3.ProjectOnPlane(_playerCam.transform.forward, Vector3.up).normalized;
+        Vector3 camRight = Vector3.ProjectOnPlane(_playerCam.transform.right, Vector3.up).normalized;
         
         Vector2 input = new Vector2(
             _controller.HorizontalInput,

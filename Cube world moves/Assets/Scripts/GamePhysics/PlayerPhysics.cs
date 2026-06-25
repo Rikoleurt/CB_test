@@ -91,8 +91,7 @@ public class PlayerPhysics : MonoBehaviour
         {
             ApplyGroundFriction();
 
-            if (_acceleration.y < 0f)
-                _acceleration.y = 0f;
+            if (_acceleration.y < 0f) _acceleration.y = 0f;
         }
         else
         {
@@ -102,16 +101,16 @@ public class PlayerPhysics : MonoBehaviour
 
     private void ApplyGroundFriction()
     {
-        Vector3 horizontalVelocity = new Vector3(_acceleration.x, 0f, _acceleration.z);
+        Vector3 groundVelocity = new Vector3(_acceleration.x, 0f, _acceleration.z);
 
-        horizontalVelocity = Vector3.Lerp(
-            horizontalVelocity,
+        groundVelocity = Vector3.Lerp(
+            groundVelocity,
             Vector3.zero,
             groundFriction
         );
 
-        _acceleration.x = horizontalVelocity.x;
-        _acceleration.z = horizontalVelocity.z;
+        _acceleration.x = groundVelocity.x;
+        _acceleration.z = groundVelocity.z;
 
         if (_acceleration.magnitude < stopThreshold)
         {
