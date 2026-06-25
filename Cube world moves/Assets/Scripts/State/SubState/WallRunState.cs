@@ -1,9 +1,4 @@
-using System;
-using NaughtyAttributes;
 using UnityEngine;
-using UnityEngine.Serialization;
-using UnityEngine.Splines;
-
 public class WallRunState : MovementState
 {
     [SerializeField] private float _jumpForce = 8f;
@@ -11,20 +6,10 @@ public class WallRunState : MovementState
     [SerializeField] private float _gravityWhileWallRunning = 0.2f;
     [SerializeField] private float _wallStickForce = 3f;
     [SerializeField] private CameraController _cameraController;
-    [SerializeField] private CameraLook _camLook;
 
     [Space(15)]
-    [Header("CameraPosition Modifiers")]
-    [SerializeField] private float forwardPosCoef;
-    [SerializeField] private float wallNormalPosCoef;
-    [SerializeField] private float heightPosCoef;
-    
-    [Space(5)]
-    [Header("CameraLook Position Modifiers")]
-    [SerializeField] private float forwardLookCoef;
-    [SerializeField] private float wallNormalLookCoef;
-    [SerializeField] private float heightLookCoef;
-    
+    [Header("Custom CameraProfile")]
+    [SerializeField] CameraProfile _wallRunProfile;
 
     private const EPlayerState ENUMTYPE = EPlayerState.WALLRUN;
     
@@ -32,12 +17,15 @@ public class WallRunState : MovementState
     {
         _playerPhysics.SetGravity(_gravityWhileWallRunning);
         _cameraController.SetIsWallRunning(true);
+        _cameraController.SetCameraProfile(_wallRunProfile);
     }
 
     public override void ExitState()
     {
         _playerPhysics.SetGravity(1f);
         _cameraController.SetIsWallRunning(false);
+        _cameraController.SetBaseCameraProfile();
+
     }
 
     public override void UpdateState()
@@ -47,20 +35,8 @@ public class WallRunState : MovementState
         SnapModel(wallHit);
         HandleJump(wallHit);
 
-        Vector3 newCameraLook =
-                wallHit.normal * wallNormalLookCoef
-                + meshModel.transform.forward * forwardLookCoef
-                + meshModel.transform.up * heightLookCoef
-                + _playerPhysics.transform.position
-            ;
         
-        Vector3 newCameraPosition = 
-                wallHit.normal * wallNormalPosCoef 
-                + -meshModel.transform.forward * forwardPosCoef 
-                + meshModel.transform.up * heightPosCoef
-                + _playerPhysics.transform.position
-            ;
-        _cameraController.UpdateWallRunCamera(newCameraPosition, newCameraLook);
+        _cameraController.UpdateWallRunCamera(wallHit.normal,meshModel.transform.forward,meshModel.transform.up);
         _playerPhysics.SetAcceleration(acceleration);
 
     }
