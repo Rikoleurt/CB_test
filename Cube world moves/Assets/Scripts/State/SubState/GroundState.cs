@@ -20,7 +20,6 @@ public class GroundState : MovementState
     public override void UpdateState()
     {
         base.UpdateState();
-        SnapModel();
         HandleJump();
         if(TryMakeTransition()) return;
     }
@@ -54,12 +53,6 @@ public class GroundState : MovementState
             _playerPhysics.AddAcceleration(jumpForce * Vector3.up);
             canJump = false;
         }
-
-    }
-
-    private void SnapModel()
-    {
-        if(acceleration.magnitude > 0.1f) meshModel.UpdateModelRotation(pivotController.transform.eulerAngles.y);
 
     }
 }

@@ -16,14 +16,12 @@ public class WallRunState : MovementState
     public override void EnterState()
     {
         _playerPhysics.SetFactorGravity(_gravityWhileWallRunning);
-        _cameraController.SetIsWallRunning(true);
         _cameraController.SetCameraProfile(_wallRunProfile);
     }
 
     public override void ExitState()
     {
         _playerPhysics.SetFactorGravity(1f);
-        _cameraController.SetIsWallRunning(false);
         _cameraController.SetBaseCameraProfile();
 
     }
