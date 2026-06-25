@@ -1256,8 +1256,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 705916291}
-  - component: {fileID: 705916288}
-  - component: {fileID: 705916287}
   - component: {fileID: 705916296}
   - component: {fileID: 705916295}
   - component: {fileID: 705916298}
@@ -1273,54 +1271,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!54 &705916287
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 705916286}
-  serializedVersion: 5
-  m_Mass: 30
-  m_LinearDamping: 0
-  m_AngularDamping: 0
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 112
-  m_CollisionDetection: 1
---- !u!65 &705916288
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 705916286}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!4 &705916291
 Transform:
   m_ObjectHideFlags: 0
@@ -1364,9 +1314,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _acceleration: {x: 0, y: 0, z: 0}
-  _gravity: 1
+  _gravity: 10
+  _gravityFactor: 1
   groundFriction: 0.1
   stopThreshold: 0.1
+  collisionMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  capsuleHeight: 1
+  capsuleRadius: 0.5
+  capsuleCenterOffset: {x: 0, y: 0, z: 0}
+  skinWidth: 0.03
+  maxSlideIterations: 3
+  groundCheckDistance: 0.08
+  maxGroundAngle: 60
+  wallCheckDistance: 0.25
+  maxWallNormalY: 0.25
 --- !u!114 &705916297
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1381,7 +1344,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxSpeed: 10
   _moveSpeed: 2
-  jumpForce: 20
+  jumpForce: 5
   canJump: 0
 --- !u!114 &705916298
 MonoBehaviour:
@@ -1446,7 +1409,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AirLockState
   _secondsUntilClimb: 0.2
-  _secondsUntilAir: 0.1
+  _secondsUntilAir: 0.4
 --- !u!114 &705916303
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,4 +1,4 @@
-﻿using NaughtyAttributes;
+using NaughtyAttributes;
 using UnityEngine;
 public class WallSlideState : MovementState
 {
@@ -11,14 +11,13 @@ public class WallSlideState : MovementState
     
     public override void EnterState()
     {
-        _playerPhysics.SetGravity(0.1f);
-        _playerPhysics.SetAcceleration(0.05f * acceleration); // To stop previous acceleration
-       
+        _playerPhysics.SetFactorGravity(0.1f);
+        _playerPhysics.SetAcceleration(0.1f * acceleration); // To stop previous acceleration
     }
 
     public override void ExitState()
     {
-        _playerPhysics.SetGravity(1);
+        _playerPhysics.SetFactorGravity(1);
         _hasWallJumped = false;
         
     }
